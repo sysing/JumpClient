@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.widget.EditText;
 import android.view.View;
 import android.widget.Toast;
+import android.content.Intent;
+
 
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,20 +33,20 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        email = (EditText) findViewById(R.id.editEmail);
-        password = (EditText) findViewById(R.id.editPassword);
+        email = (EditText) findViewById(R.id.enterEmail);
+        password = (EditText) findViewById(R.id.enterPassword);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("user");
     }
 
     public void signInButtonClicked(View view){
-        String email =  email.getText().toString().trim();
-        String password = password.getText().toString().trim();
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password){
+        String email_text =  email.getText().toString().trim();
+        String password_text = password.getText().toString().trim();
+        if (TextUtils.isEmpty(email_text) || TextUtils.isEmpty(password_text)){
             Toast.makeText(LoginActivity.this, "Please fill in all fields",
                     Toast.LENGTH_SHORT).show();
         }else{
-            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new onCompleteListener<AuthResult>(){
+            mAuth.signInWithEmailAndPassword(email_text,password_text).addOnCompleteListener(new OnCompleteListener<AuthResult>(){
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task){
                     if(task.isSuccessful()){
@@ -70,6 +72,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        })
+        });
     }
 }

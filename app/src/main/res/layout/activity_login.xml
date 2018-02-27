@@ -11,13 +11,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign IN"
+        android:text="Sign In"
         />
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Enter Email"
-        android:id="@+id/editEmail"
+        android:inputType="textEmailAddress"
+        android:id="@+id/enterEmail"
         />
 
     <EditText
@@ -25,7 +26,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:hint="Enter Password"
-        android:id="@+id/editPassword"
+        android:id="@+id/enterPassword"
         />
 
     <Button
