@@ -36,7 +36,7 @@ public class MenuActivity extends AppCompatActivity {
         mItemList.setHasFixedSize(true);
         mItemList.setLayoutManager(new LinearLayoutManager(this));
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("item");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("items");
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {

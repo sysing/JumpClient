@@ -52,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            String user_id = mAuth.getCurrentUser().getUid();
-                            DatabaseReference current_user = mDatabase.child(user_id);
-                            current_user.child("name").setValue(email_text);
                             if ( task.isSuccessful()) {
+                                String user_id = mAuth.getCurrentUser().getUid();
+                                DatabaseReference current_user = mDatabase.child(user_id);
+                                current_user.child("name").setValue(email_text);
                                 Toast.makeText(MainActivity.this, "Account Created",
                                         Toast.LENGTH_SHORT).show();
                                 Intent login = new Intent(MainActivity.this,LoginActivity.class);
@@ -68,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
 
+    public void LoginRedirect (View view) {
+        Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(loginIntent);
     }
 }
