@@ -70,8 +70,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void LoginRedirect (View view) {
+    public void loginRedirect (View view) {
         Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(loginIntent);
     }
+/** test buttons **/
+    public void addItemRedirect (View view) {
+        Intent addItemIntent = new Intent(MainActivity.this, AddItem.class);
+        startActivity(addItemIntent);
+    }
+    public void menuRedirect (View view) {
+        Intent addItemIntent = new Intent(MainActivity.this, MenuActivity.class);
+        startActivity(addItemIntent);
+    }
+
 }
