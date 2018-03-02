@@ -12,6 +12,7 @@ import android.view.View;
 import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +33,7 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        mItemList = (RecyclerView) findViewById(R.id.foodList);
+        mItemList = (RecyclerView) findViewById(R.id.itemList);
         mItemList.setHasFixedSize(true);
         mItemList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -68,6 +69,22 @@ public class MenuActivity extends AppCompatActivity {
                 viewHolder.setName(model.getName());
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setPrice(model.getPrice());
+                viewHolder.setQuantity(model.getQuantity());
+/**
+                final String item_key = getRef(position).getKey().toString();
+                viewHolder.mView.setOnClickListener(getRef(position).getKey().toString(){
+                    @Override
+                    public void onClick(View v)[
+
+                            Intent singleItemActivity - new Intent(MenuActivity.this, SingleItemActivity.class);
+                            singleItemActivity.putExtras("itemId",item_key);
+                            startActivity(singleItemActivity);
+
+                             Toast.makeText(MenuActivity.this, "Passwords do not match",
+                                 Toast.LENGTH_SHORT).show();
+                });
+            **/
+
             }
         };
         mItemList.setAdapter(FRBA);
@@ -80,21 +97,31 @@ public class MenuActivity extends AppCompatActivity {
             mView = itemView;
         }
         public void setImage(Context ctx ,String image){
-            ImageView itemImage = (ImageView) mView.findViewById(R.id.itemImage);
+            ImageView itemImage = mView.findViewById(R.id.itemImage);
             Picasso.with(ctx).load(image).into(itemImage);
         }
         public void setName(String name){
-            TextView itemName = (TextView) mView.findViewById(R.id.itemName);
+            TextView itemName = mView.findViewById(R.id.itemName);
             itemName.setText(name);
         }
         public void setDesc(String desc){
-            TextView itemDesc = (TextView) mView.findViewById(R.id.itemDesc);
+            TextView itemDesc = mView.findViewById(R.id.itemDesc);
             itemDesc.setText(desc);
         }
         public void setPrice(String price){
-            TextView itemPrice = (TextView) mView.findViewById(R.id.itemPrice);
+            TextView itemPrice =  mView.findViewById(R.id.itemPrice);
             itemPrice.setText(price);
         }
+
+        public void setQuantity(String quantity) {
+            TextView itemQuantity =  mView.findViewById(R.id.itemQuantity);
+            itemQuantity.setText(quantity);
+        }
+    }
+
+    public void addItemRedirect (View view) {
+        Intent addItemIntent = new Intent(MenuActivity.this, AddItem.class);
+        startActivity(addItemIntent);
     }
 
 

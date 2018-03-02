@@ -5,13 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.g6.jumpclient.MenuActivity">
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="addItem"
+        android:onClick="addItemRedirect"
+        />
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/foodList"
+        android:id="@+id/itemList"
         >
-
     </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

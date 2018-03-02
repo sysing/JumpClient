@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Jump</string>
+    <string name="title_activity_vendor_config">VendorConfig</string>
 </resources>
