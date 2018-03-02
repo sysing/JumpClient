@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.content.Context;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,9 +37,7 @@ public class MenuActivity extends AppCompatActivity {
         mItemList = (RecyclerView) findViewById(R.id.itemList);
         mItemList.setHasFixedSize(true);
         mItemList.setLayoutManager(new LinearLayoutManager(this));
-
         mDatabase = FirebaseDatabase.getInstance().getReference().child("items");
-
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -64,38 +63,58 @@ public class MenuActivity extends AppCompatActivity {
                 mDatabase
         ){
             @Override
-            protected void populateViewHolder(ItemViewHolder viewHolder, Item model, int position){
+            protected void populateViewHolder(ItemViewHolder viewHolder, Item model, final int position){
                 viewHolder.setImage(getApplicationContext(),model.getImage());
                 viewHolder.setName(model.getName());
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setPrice(model.getPrice());
-                viewHolder.setQuantity(model.getQuantity());
-/**
-                final String item_key = getRef(position).getKey().toString();
-                viewHolder.mView.setOnClickListener(getRef(position).getKey().toString(){
-                    @Override
-                    public void onClick(View v)[
-
-                            Intent singleItemActivity - new Intent(MenuActivity.this, SingleItemActivity.class);
-                            singleItemActivity.putExtras("itemId",item_key);
-                            startActivity(singleItemActivity);
-
-                             Toast.makeText(MenuActivity.this, "Passwords do not match",
-                                 Toast.LENGTH_SHORT).show();
-                });
-            **/
 
             }
         };
         mItemList.setAdapter(FRBA);
     }
 
+
+
     public static class ItemViewHolder extends RecyclerView.ViewHolder{
         View mView;
         public ItemViewHolder(View itemView){
             super(itemView);
             mView = itemView;
+            Button itemPlus = itemView.findViewById(R.id.itemPlus);
+            Button itemMinus = itemView.findViewById(R.id.itemMinus);
+
+            itemPlus.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick (View v){
+                    TextView quantity = mView.findViewById(R.id.itemQuantity);
+                    int quantityInt = Integer.valueOf(quantity.getText().toString());
+                    if (quantityInt == 99){
+                        return;
+                    }
+                    setQuantity(""+(quantityInt + 1));
+                }
+            });
+
+            itemMinus.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick (View v){
+                    TextView quantity = mView.findViewById(R.id.itemQuantity);
+                    int quantityInt = Integer.valueOf(quantity.getText().toString());
+                    if (quantityInt == 0){
+                        return;
+                    }
+                    setQuantity(""+(quantityInt - 1));
+                }
+            });
         }
+
+        public void setQuantity(String quantity){
+            TextView itemName = mView.findViewById(R.id.itemQuantity);
+            itemName.setText(quantity);
+        }
+
+
         public void setImage(Context ctx ,String image){
             ImageView itemImage = mView.findViewById(R.id.itemImage);
             Picasso.with(ctx).load(image).into(itemImage);
@@ -112,11 +131,11 @@ public class MenuActivity extends AppCompatActivity {
             TextView itemPrice =  mView.findViewById(R.id.itemPrice);
             itemPrice.setText(price);
         }
-
-        public void setQuantity(String quantity) {
-            TextView itemQuantity =  mView.findViewById(R.id.itemQuantity);
-            itemQuantity.setText(quantity);
+        public void quantityPlus (View view) {
+            TextView quantity = view.findViewById(R.id.itemQuantity);
+            quantity.setText("2");
         }
+
     }
 
     public void addItemRedirect (View view) {

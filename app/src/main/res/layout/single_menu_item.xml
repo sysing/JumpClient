@@ -71,6 +71,7 @@
                 android:layout_height="25dp"
                 android:layout_below="@+id/itemDesc"
                 android:layout_toRightOf="@+id/itemImage"
+                android:layout_marginTop="20dp"
                 android:background="@android:drawable/arrow_up_float"
                 />
             <Button
@@ -79,6 +80,7 @@
                 android:layout_height="25dp"
                 android:layout_below="@+id/itemDesc"
                 android:layout_toRightOf="@+id/itemQuantity"
+                android:layout_marginTop="20dp"
                 android:background="@android:drawable/arrow_down_float"
                 />
         </RelativeLayout>

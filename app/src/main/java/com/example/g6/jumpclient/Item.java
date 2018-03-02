@@ -5,7 +5,7 @@ package com.example.g6.jumpclient;
  */
 
 public class Item {
-    private String image,name,desc,price,quantity;
+    private String image,name,desc,price;
 
     public Item(){
 
@@ -16,7 +16,6 @@ public class Item {
         this.name = name;
         this.desc = desc;
         this.price = price;
-        this.quantity = "0";
     }
 
     public String getImage(){
@@ -31,9 +30,7 @@ public class Item {
     public String getPrice(){
         return this.price;
     }
-    public String getQuantity(){
-        return this.quantity;
-    }
+
     public void setImage(String image){
          this.image = image;
     }
@@ -45,9 +42,6 @@ public class Item {
     }
     public void setPrice(String price){
          this.price = price;
-    }
-    public void setQuantity(String quantity){
-         this.quantity = quantity;
     }
 
 }
