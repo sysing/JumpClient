@@ -1,9 +1,7 @@
 package com.example.g6.jumpclient;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,8 +11,8 @@ import android.content.Context;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.g6.jumpclient.Class.Item;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -75,7 +73,6 @@ public class MenuActivity extends AppCompatActivity {
     }
 
 
-
     public static class ItemViewHolder extends RecyclerView.ViewHolder{
         View mView;
         public ItemViewHolder(View itemView){
@@ -130,10 +127,6 @@ public class MenuActivity extends AppCompatActivity {
         public void setPrice(String price){
             TextView itemPrice =  mView.findViewById(R.id.itemPrice);
             itemPrice.setText(price);
-        }
-        public void quantityPlus (View view) {
-            TextView quantity = view.findViewById(R.id.itemQuantity);
-            quantity.setText("2");
         }
 
     }

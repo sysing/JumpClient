@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
                     if(task.isSuccessful()){
                         Toast.makeText(LoginActivity.this, "Sign In Successful",
                                 Toast.LENGTH_SHORT).show();
-                        Intent menuIntent = new Intent(LoginActivity.this, MenuActivity.class);
+                        Intent menuIntent = new Intent(LoginActivity.this, RestaurantListActivity.class);
                         startActivity(menuIntent);
                     }else{
                         Toast.makeText(LoginActivity.this, "Sign In Failed",
