@@ -1,7 +1,6 @@
-package com.example.g6.jumpclient;
+package com.example.g6.jumpclient.Add;
 
 import android.content.Intent;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,7 +12,10 @@ import android.view.View;
 import android.net.Uri;
 import android.widget.Toast;
 
+import com.example.g6.jumpclient.R;
+import com.example.g6.jumpclient.List.RestaurantList;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,7 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.firebase.database.Query;
 
 public class AddRestaurant extends AppCompatActivity {
 
@@ -34,7 +35,10 @@ public class AddRestaurant extends AppCompatActivity {
     private StorageReference storageReference = null;
     private DatabaseReference mRef;
     private FirebaseDatabase firebaseDatabase;
-    private Boolean restaurantExist ;
+    private String restaurantKey, locationKey,keyType;
+    private FirebaseAuth mAuth;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,14 +50,25 @@ public class AddRestaurant extends AppCompatActivity {
         addRestaurantButton = (Button) findViewById(R.id.addRestaurantButton);
         storageReference = FirebaseStorage.getInstance().getReference();
         mRef = FirebaseDatabase.getInstance().getReference("restaurants");
-        if (getIntent().getExtras() != null){ //check if updating existing restaurant
-            String restaurantId = getIntent().getExtras().getString("restaurantId");
-            mRef = mRef.child(restaurantId);
-            restaurantExist = true;
+        mAuth = FirebaseAuth.getInstance();
+
+        keyType = getIntent().getExtras().getString("type");
+        if (keyType.equals("update")){ //check if updating existing restaurant
             addRestaurantButton.setText("Update Restaurant");
-        }else{
+            restaurantKey = getIntent().getExtras().getString("restaurantKey");
+            mRef = mRef.child(restaurantKey);
+            mRef.child("locationKey").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    locationKey = dataSnapshot.getValue(String.class);
+                }
+                @Override
+                public void onCancelled(DatabaseError error) {
+                }
+            });
+        }else if (keyType.equals("add")){  //adding new restaurant
             mRef = mRef.push();
-            restaurantExist = false;
+            locationKey = getIntent().getExtras().getString("locationKey");
         }
 
     }
@@ -91,11 +106,15 @@ public class AddRestaurant extends AppCompatActivity {
                             mRef.child("image").setValue(downloadUrl.toString());
                             mRef.child("delete").setValue(0);
                             mRef.child("updated").setValue(System.currentTimeMillis());
-                            if (!restaurantExist) {
+                            if (keyType.equals("add")) {
                                 mRef.child("created").setValue(System.currentTimeMillis());
+                                mRef.child("locationKey").setValue(locationKey);
+                                mRef.child("vendorKey").setValue(mAuth.getCurrentUser().getUid());
                             }
                             Toast.makeText(AddRestaurant.this,"Restaurant Added",Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(AddRestaurant.this, RestaurantListActivity.class);
+
+                            Intent intent = new Intent(AddRestaurant.this, RestaurantList.class);
+                            intent.putExtra("locationKey",locationKey);
                             startActivity(intent);
 
                         }
