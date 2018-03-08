@@ -1,19 +1,19 @@
 package com.example.g6.jumpclient.Add;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.view.View;
-import android.net.Uri;
 import android.widget.Toast;
 
-import com.example.g6.jumpclient.R;
+import com.example.g6.jumpclient.Class.Restaurant;
 import com.example.g6.jumpclient.List.RestaurantList;
+import com.example.g6.jumpclient.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -104,7 +104,7 @@ public class AddRestaurant extends AppCompatActivity {
                             mRef.child("name").setValue(name_text);
                             mRef.child("desc").setValue(desc_text);
                             mRef.child("image").setValue(downloadUrl.toString());
-                            mRef.child("delete").setValue(0);
+                            mRef.child("status").setValue(Restaurant.VALID);
                             mRef.child("updated").setValue(System.currentTimeMillis());
                             if (keyType.equals("add")) {
                                 mRef.child("created").setValue(System.currentTimeMillis());

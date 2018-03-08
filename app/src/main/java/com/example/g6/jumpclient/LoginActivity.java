@@ -1,24 +1,23 @@
 package com.example.g6.jumpclient;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.EditText;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
-import android.content.Intent;
 
-
+import com.example.g6.jumpclient.List.LocationList;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.ValueEventListener;
 
 
@@ -52,8 +51,9 @@ public class LoginActivity extends AppCompatActivity {
                     if(task.isSuccessful()){
                         Toast.makeText(LoginActivity.this, "Sign In Successful",
                                 Toast.LENGTH_SHORT).show();
-                        Intent menuIntent = new Intent(LoginActivity.this, RestaurantListActivity.class);
-                        startActivity(menuIntent);
+                        Intent intent = new Intent(LoginActivity.this, LocationList.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
                     }else{
                         Toast.makeText(LoginActivity.this, "Sign In Failed",
                                 Toast.LENGTH_SHORT).show();
@@ -69,8 +69,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(user_id)){
-                    Intent menuIntent = new Intent(LoginActivity.this, MenuActivity.class);
-                    startActivity(menuIntent);
+                    Intent intent = new Intent(LoginActivity.this, LocationList.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
             }
 

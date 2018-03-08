@@ -5,17 +5,22 @@ package com.example.g6.jumpclient.Class;
  */
 
 public class Item {
-    private String image, name, desc, price;
-    private Integer delete;
+    public static final Integer DELETED = 0, VALID = 1;
+    private String image, name, desc, restaurantKey;
+    private Float price;
+    private Integer status;
     private Long created, updated;
 
-    public Item(String image, String name, String desc, String price, Integer delete, Long created, Long updated) {
+
+    public Item(String image, String name, String desc, Float price, String restaurantKey, Integer status, Long created, Long updated) {
 
         this.image = image;
         this.name = name;
         this.desc = desc;
         this.price = price;
-        this.delete = delete;
+        this.restaurantKey = restaurantKey;
+
+        this.status = status;
         this.created = created;
         this.updated = updated;
     }
@@ -48,20 +53,20 @@ public class Item {
         this.desc = desc;
     }
 
-    public String getPrice() {
+    public Float getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 
-    public Integer getDelete() {
-        return delete;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setDelete(Integer delete) {
-        this.delete = delete;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Long getCreated() {
@@ -78,5 +83,14 @@ public class Item {
     public void setUpdated(Long updated) {
         this.updated = updated;
     }
+
+    public String getRestaurantKey() {
+        return restaurantKey;
+    }
+
+    public void setRestaurantKey(String restaurantKey) {
+        this.restaurantKey = restaurantKey;
+    }
+
 
 }

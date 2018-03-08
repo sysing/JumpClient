@@ -24,10 +24,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity" />
-        <activity android:name=".MenuActivity" />
-        <activity android:name=".AddItem" />
-        <activity android:name=".RestaurantListActivity" />
-        <activity android:name=".AddRestaurant"></activity>
+        <activity android:name=".List.ItemList" />
+        <activity android:name=".Add.AddItem" />
+        <activity android:name=".List.RestaurantList" />
+        <activity android:name=".Add.AddRestaurant" />
+        <activity android:name=".List.LocationList" />
+        <activity android:name=".List.ToolBarActivity"></activity>
     </application>
 
 </manifest>

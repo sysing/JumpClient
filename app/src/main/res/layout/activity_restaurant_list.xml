@@ -4,18 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.g6.jumpclient.RestaurantListActivity">
-    <Button
+    tools:context="com.example.g6.jumpclient.List.RestaurantList">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/restaurantList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="addRestaurant"
-        android:onClick="addRestaurantClicked"
-        />
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/restaurantList"
         >
     </android.support.v7.widget.RecyclerView>
-
+    <Button
+        android:id="@+id/addRestaurantButton"
+        android:layout_below="@+id/restaurantList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="add Restaurant"
+        android:visibility="gone"
+        android:onClick="addRestaurantClicked"
+        />
 </RelativeLayout>

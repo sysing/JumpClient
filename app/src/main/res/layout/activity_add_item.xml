@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.g6.jumpclient.AddItem">
+    tools:context="com.example.g6.jumpclient.Add.AddItem">
 
     <ImageButton
         android:id="@+id/itemImage"
@@ -32,10 +32,11 @@
         android:hint="Enter item price"
         />
     <Button
+        android:id="@+id/addItemButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add item to menu"
-        android:onClick="addItemButtonClicked"
+        android:onClick="addItemClicked"
         />
 
 </LinearLayout>

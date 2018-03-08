@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.g6.jumpclient.AddRestaurant">
+    tools:context="com.example.g6.jumpclient.Add.AddRestaurant">
 
     <ImageButton
         android:id="@+id/restaurantImage"
@@ -17,13 +17,13 @@
         android:id="@+id/restaurantName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter item name"
+        android:hint="Enter restaurant name"
         />
     <EditText
         android:id="@+id/restaurantDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter item description"
+        android:hint="Enter restaurant description"
         />
     <Button
         android:id="@+id/addRestaurantButton"

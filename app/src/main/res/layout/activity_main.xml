@@ -75,18 +75,6 @@
         android:text="Sign In"
         android:onClick="loginRedirect"
         />
-   <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="addItem"
-        android:onClick="addItemRedirect"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="menu"
-        android:onClick="menuRedirect"
-        />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

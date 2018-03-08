@@ -1,26 +1,26 @@
 package com.example.g6.jumpclient.Class;
 
+import java.util.List;
+
 /**
  * Created by g6 on 05-Mar-18.
  */
 
-public class Restaurant {
+public class Location {
     public static final Integer DELETED = 0, VALID = 1;
-    private String image,name,desc,locationKey,vendorKey;
+    private String image,name,desc;
     private Integer status;
     private Long created,updated;
 
-    public Restaurant(){
+    public Location(){
 
     }
 
-    public Restaurant(String image, String name, String desc, String locationKey, String vendorKey, Integer status, Long created, Long updated) {
+    public Location(String image, String name, String desc, Integer delete, Long created, Long updated, List<String> restaurantKeys) {
         this.image = image;
         this.name = name;
         this.desc = desc;
-        this.locationKey = locationKey;
-        this.vendorKey = vendorKey;
-        this.status = status;
+        this.status = delete;
         this.created = created;
         this.updated = updated;
     }
@@ -73,20 +73,5 @@ public class Restaurant {
         this.updated = updated;
     }
 
-    public String getLocationKey() {
-        return locationKey;
-    }
-
-    public void setLocationKey(String locationKey) {
-        this.locationKey = locationKey;
-    }
-
-    public String getVendorKey() {
-        return vendorKey;
-    }
-
-    public void setVendorKey(String vendorKey) {
-        this.vendorKey = vendorKey;
-    }
 }
 

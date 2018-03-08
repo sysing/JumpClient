@@ -1,18 +1,15 @@
 package com.example.g6.jumpclient.List;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.content.Context;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.g6.jumpclient.Add.AddRestaurant;
 import com.example.g6.jumpclient.Class.Location;
 import com.example.g6.jumpclient.MainActivity;
 import com.example.g6.jumpclient.R;
@@ -22,7 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
-public class LocationList extends AppCompatActivity {
+public class LocationList extends ToolBarActivity {
 
     private RecyclerView mItemList;
     private DatabaseReference mDatabase;
@@ -34,7 +31,6 @@ public class LocationList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
-
         mItemList = (RecyclerView) findViewById(R.id.locationList);
         mItemList.setHasFixedSize(true);
         mItemList.setLayoutManager(new LinearLayoutManager(this));
@@ -67,7 +63,7 @@ public class LocationList extends AppCompatActivity {
         ){
             @Override
             protected void populateViewHolder(ItemViewHolder viewHolder, Location model, final int position){
-                if (model.getDelete() == null || model.getDelete() == 1){
+                if (model.getStatus() == null || model.getStatus() == Location.DELETED){
                     viewHolder.hideLayout();
                 }
                 viewHolder.setImage(getApplicationContext(),model.getImage());
@@ -123,10 +119,8 @@ public class LocationList extends AppCompatActivity {
             param.height = 0;
             mView.setLayoutParams(param);
         }
-        public void deleteItem(String id){
-            mDatabase.child(id).child("delete").setValue(1);
-        }
     }
+
 
 }
 
