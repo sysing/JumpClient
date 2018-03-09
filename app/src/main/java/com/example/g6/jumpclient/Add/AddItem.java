@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.g6.jumpclient.Class.Item;
 import com.example.g6.jumpclient.List.ItemList;
+import com.example.g6.jumpclient.List.VendorItemList;
 import com.example.g6.jumpclient.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -30,9 +31,10 @@ public class AddItem extends AppCompatActivity {
     private Button addItemButton;
     private Uri uri = null;
     private StorageReference storageReference = null;
-    private DatabaseReference mRef , DB_restaurant;
-    private FirebaseDatabase firebaseDatabase;
-    private String restaurantKey,itemKey, keyType;
+    private DatabaseReference mRef ;
+    private String restaurantKey,itemKey;
+    private Integer keyType;
+    public static final Integer ADD = 1,UPDATE = 2;
 
 
     @Override
@@ -48,14 +50,14 @@ public class AddItem extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
         mRef = FirebaseDatabase.getInstance().getReference("items");
 
-        keyType = getIntent().getExtras().getString("type");
-        if (keyType.equals("update")){ //check if updating existing restaurant
+        keyType = getIntent().getExtras().getInt("type");
+        if (keyType.equals(UPDATE)){ //check if updating existing restaurant
             addItemButton.setText("Update item");
             itemKey = getIntent().getExtras().getString("itemKey");
             mRef = mRef.child(itemKey);
-        }else if (keyType.equals("add")){  //adding new restaurant
-            mRef = mRef.push();
+        }else if (keyType.equals(ADD)){  //adding new restaurant
             restaurantKey = getIntent().getExtras().getString("restaurantKey");
+            mRef = mRef.push();
         }
     }
 
@@ -101,13 +103,13 @@ public class AddItem extends AppCompatActivity {
                         mRef.child("image").setValue(downloadUrl.toString());
                         mRef.child("status").setValue(Item.VALID);
                         mRef.child("updated").setValue(System.currentTimeMillis());
-                        if (keyType.equals("add")) {
+                        if (keyType.equals(ADD)) {
                             mRef.child("created").setValue(System.currentTimeMillis());
                             mRef.child("restaurantKey").setValue(restaurantKey);
                         }
 
                         Toast.makeText(AddItem.this, "Item added", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(AddItem.this, ItemList.class);
+                        Intent intent = new Intent(AddItem.this, VendorItemList.class);
                         intent.putExtra("restaurantKey", restaurantKey);
                         startActivity(intent);
                     }
