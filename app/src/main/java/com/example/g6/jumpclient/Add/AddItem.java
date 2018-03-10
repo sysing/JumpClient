@@ -12,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.g6.jumpclient.Class.Item;
-import com.example.g6.jumpclient.List.ItemList;
 import com.example.g6.jumpclient.List.VendorItemList;
 import com.example.g6.jumpclient.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,6 +48,7 @@ public class AddItem extends AppCompatActivity {
         addItemButton = (Button) findViewById(R.id.addItemButton);
         storageReference = FirebaseStorage.getInstance().getReference();
         mRef = FirebaseDatabase.getInstance().getReference("items");
+        restaurantKey = getIntent().getExtras().getString("restaurantKey");
 
         keyType = getIntent().getExtras().getInt("type");
         if (keyType.equals(UPDATE)){ //check if updating existing restaurant
@@ -56,7 +56,6 @@ public class AddItem extends AppCompatActivity {
             itemKey = getIntent().getExtras().getString("itemKey");
             mRef = mRef.child(itemKey);
         }else if (keyType.equals(ADD)){  //adding new restaurant
-            restaurantKey = getIntent().getExtras().getString("restaurantKey");
             mRef = mRef.push();
         }
     }
@@ -82,7 +81,7 @@ public class AddItem extends AppCompatActivity {
         final String desc_text= desc.getText().toString().trim();
         final String price_text= price.getText().toString().trim();
         if (TextUtils.isEmpty(name_text) || TextUtils.isEmpty(desc_text)|| TextUtils.isEmpty(price_text) || (uri == null) ) {
-            Toast.makeText(AddItem.this, "Please enter name,description and price", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddItem.this, "Please upload item image & enter name,description,price", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
@@ -111,6 +110,7 @@ public class AddItem extends AppCompatActivity {
                         Toast.makeText(AddItem.this, "Item added", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(AddItem.this, VendorItemList.class);
                         intent.putExtra("restaurantKey", restaurantKey);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
                 });

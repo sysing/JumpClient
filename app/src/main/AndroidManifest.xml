@@ -23,13 +23,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".List.ItemList" />
-        <activity android:name=".Add.AddItem" />
-        <activity android:name=".List.RestaurantList" />
-        <activity android:name=".Add.AddRestaurant" />
-        <activity android:name=".List.LocationList" />
-        <activity android:name=".List.ToolBarActivity"></activity>
+        <activity
+            android:name=".LoginActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".List.VendorItemList"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".List.UserItemList"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Add.AddItem"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".List.RestaurantList"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Add.AddRestaurant"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".List.LocationList"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".List.ToolBarActivity" />
+        <activity android:name=".List.OrderView" />
+        <activity android:name=".List.OrderList"></activity>
     </application>
 
 </manifest>

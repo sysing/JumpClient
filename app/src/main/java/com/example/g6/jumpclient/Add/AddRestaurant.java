@@ -16,11 +16,8 @@ import com.example.g6.jumpclient.List.RestaurantList;
 import com.example.g6.jumpclient.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -34,9 +31,11 @@ public class AddRestaurant extends AppCompatActivity {
     private Uri uri = null;
     private StorageReference storageReference = null;
     private DatabaseReference mRef;
-    private FirebaseDatabase firebaseDatabase;
-    private String restaurantKey, locationKey,keyType;
+    private String restaurantKey, locationKey;
+    private Integer keyType;
     private FirebaseAuth mAuth;
+    public static final Integer ADD = 1,UPDATE = 2;
+
 
 
     @Override
@@ -51,24 +50,14 @@ public class AddRestaurant extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
         mRef = FirebaseDatabase.getInstance().getReference("restaurants");
         mAuth = FirebaseAuth.getInstance();
-
-        keyType = getIntent().getExtras().getString("type");
-        if (keyType.equals("update")){ //check if updating existing restaurant
+        locationKey = getIntent().getExtras().getString("locationKey");
+        keyType = getIntent().getExtras().getInt("type");
+        if (keyType.equals(UPDATE)){ //check if updating existing restaurant
             addRestaurantButton.setText("Update Restaurant");
             restaurantKey = getIntent().getExtras().getString("restaurantKey");
             mRef = mRef.child(restaurantKey);
-            mRef.child("locationKey").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    locationKey = dataSnapshot.getValue(String.class);
-                }
-                @Override
-                public void onCancelled(DatabaseError error) {
-                }
-            });
-        }else if (keyType.equals("add")){  //adding new restaurant
+        }else if (keyType.equals(ADD)){  //adding new restaurant
             mRef = mRef.push();
-            locationKey = getIntent().getExtras().getString("locationKey");
         }
 
     }
@@ -106,7 +95,7 @@ public class AddRestaurant extends AppCompatActivity {
                             mRef.child("image").setValue(downloadUrl.toString());
                             mRef.child("status").setValue(Restaurant.VALID);
                             mRef.child("updated").setValue(System.currentTimeMillis());
-                            if (keyType.equals("add")) {
+                            if (keyType.equals(ADD)) {
                                 mRef.child("created").setValue(System.currentTimeMillis());
                                 mRef.child("locationKey").setValue(locationKey);
                                 mRef.child("vendorKey").setValue(mAuth.getCurrentUser().getUid());
@@ -114,6 +103,7 @@ public class AddRestaurant extends AppCompatActivity {
                             Toast.makeText(AddRestaurant.this,"Restaurant Added",Toast.LENGTH_SHORT).show();
 
                             Intent intent = new Intent(AddRestaurant.this, RestaurantList.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.putExtra("locationKey",locationKey);
                             startActivity(intent);
 

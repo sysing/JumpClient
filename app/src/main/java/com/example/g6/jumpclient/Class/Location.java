@@ -10,7 +10,7 @@ public class Location {
     public static final Integer DELETED = 0, VALID = 1;
     private String image,name,desc;
     private Integer status;
-    private Long created,updated;
+    private long created,updated;
 
     public Location(){
 

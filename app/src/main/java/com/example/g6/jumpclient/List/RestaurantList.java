@@ -36,18 +36,16 @@ public class RestaurantList extends ToolBarActivity {
         private DatabaseReference mDatabase;
         private FirebaseAuth mAuth;
         private FirebaseAuth.AuthStateListener mAuthListener;
-        private String locationKey, user_id;
+        private static String locationKey, userKey;
         private Integer user_status;
         private Button addRestaurantButton;
         private static final String TAG = "RestaurantList";
 
-
-
     @Override
-        protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            setContentView(R.layout.activity_restaurant_list);
+            setContentView(R.layout.restaurant_list);
             mItemList = (RecyclerView) findViewById(R.id.restaurantList);
             mItemList.setHasFixedSize(false);
             mItemList.setLayoutManager(new LinearLayoutManager(this));
@@ -71,45 +69,13 @@ public class RestaurantList extends ToolBarActivity {
             mAuth.addAuthStateListener(mAuthListener);
 
             //Check user type
-            user_id = mAuth.getCurrentUser().getUid();
+            userKey = mAuth.getCurrentUser().getUid();
 
-            mDatabase.child("users").child(user_id).child("status").addValueEventListener(new ValueEventListener() {
+            mDatabase.child("users").child(userKey).child("status").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     user_status = dataSnapshot.getValue(Integer.class);
-                    FirebaseRecyclerAdapter<Restaurant, ItemViewHolder> FRBA = new FirebaseRecyclerAdapter <Restaurant, ItemViewHolder>(
-                            Restaurant.class,
-                            R.layout.single_restaurant_item,
-                            ItemViewHolder.class,
-                            mDatabase.child("restaurants")
-                    ){
-                        @Override
-                        protected void populateViewHolder(ItemViewHolder viewHolder, Restaurant model, final int position){
-                            final String restaurantKey = getRef(position).getKey();
-                            if (!(model.getLocationKey().equals(locationKey)) ||
-                                    (user_status == User.VENDOR && !(model.getVendorKey().equals(user_id))) ||
-                                    model.getStatus() == Restaurant.DELETED ){
-                                viewHolder.hideLayout();
-                            }else{
-                                viewHolder.configLayout(user_status,restaurantKey);
-                                viewHolder.setImage(getApplicationContext(), model.getImage());
-                                viewHolder.setName(model.getName());
-                                viewHolder.setDesc(model.getDesc());
-                                viewHolder.mView.setOnClickListener(new OnClickListener() { //Redirect to menu
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent intent = new Intent(RestaurantList.this, ItemList.class);
-                                        intent.putExtra("restaurantKey",restaurantKey);
-                                        startActivity(intent);
-                                    }
-                                });
-                            }
-                        }
-                    };
-                    mItemList.setAdapter(FRBA);
-                    if (user_status == User.VENDOR){
-                        addRestaurantButton.setVisibility(VISIBLE);
-                    }
+                    showRecycler();
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -118,7 +84,51 @@ public class RestaurantList extends ToolBarActivity {
             });
         }
 
-        public static class ItemViewHolder extends RecyclerView.ViewHolder{
+    private void showRecycler(){
+        FirebaseRecyclerAdapter<Restaurant, ItemViewHolder> FRBA = new FirebaseRecyclerAdapter <Restaurant, ItemViewHolder>(
+                Restaurant.class,
+                R.layout.single_restaurant_item,
+                ItemViewHolder.class,
+                mDatabase.child("restaurants")
+        ){
+            @Override
+            protected void populateViewHolder(ItemViewHolder viewHolder, Restaurant model, final int position){
+                final String restaurantKey = getRef(position).getKey();
+                if (!(model.getLocationKey().equals(locationKey)) ||
+                        (user_status == User.VENDOR && !(model.getVendorKey().equals(userKey))) ||
+                        model.getStatus().intValue() == Restaurant.DELETED.intValue() ){
+                    viewHolder.hideLayout();
+                }else{
+                    viewHolder.configLayout(user_status,restaurantKey);
+                    viewHolder.setImage(getApplicationContext(), model.getImage());
+                    viewHolder.setName(model.getName());
+                    viewHolder.setDesc(model.getDesc());
+                    viewHolder.mView.setOnClickListener(new OnClickListener() { //Redirect to menu
+                        @Override
+                        public void onClick(View v) {
+                            if (user_status == User.USER) {
+                                Intent intent = new Intent(RestaurantList.this, UserItemList.class);
+                                intent.putExtra("restaurantKey",restaurantKey);
+                                startActivity(intent);
+                            }
+                            if (user_status == User.VENDOR || user_status == User.ADMIN ) {
+                                Intent intent = new Intent(RestaurantList.this, VendorItemList.class);
+                                intent.putExtra("restaurantKey",restaurantKey);
+                                startActivity(intent);
+                            }
+
+                        }
+                    });
+                }
+            }
+        };
+        mItemList.setAdapter(FRBA);
+        if (user_status == User.VENDOR){
+            addRestaurantButton.setVisibility(VISIBLE);
+        }
+    }
+
+    protected static class ItemViewHolder extends RecyclerView.ViewHolder{
             View mView;
             String id;
             Button  editButton = itemView.findViewById(R.id.editButton);
@@ -142,7 +152,7 @@ public class RestaurantList extends ToolBarActivity {
                     @Override
                     public void onClick(View v) {
                         String restaurantKey = v.getTag().toString();
-                        mRef.child(restaurantKey).child("delete").setValue(1);
+                        mRef.child(restaurantKey).child("status").setValue(Restaurant.DELETED);
                     }
                 });
                 editButton.setOnClickListener(new View.OnClickListener() {
@@ -150,8 +160,10 @@ public class RestaurantList extends ToolBarActivity {
                     public void onClick(View v) {
                         String restaurantKey = v.getTag().toString();
                         Intent intent = new Intent(v.getContext(), AddRestaurant.class);
-                        intent.putExtra("type", "update");
+                        intent.putExtra("type", AddRestaurant.UPDATE);
+                        intent.putExtra("locationKey", locationKey);
                         intent.putExtra("restaurantKey", restaurantKey);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         v.getContext().startActivity(intent);
                     }
                 });
@@ -184,9 +196,10 @@ public class RestaurantList extends ToolBarActivity {
 
     public void addRestaurantClicked (View view) {
         Intent intent = new Intent(RestaurantList.this, AddRestaurant.class);
-        intent.putExtra("type","add");
+        intent.putExtra("type",AddRestaurant.ADD);
         intent.putExtra("locationKey",locationKey);
-        startActivity(intent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+         startActivity(intent);
     }
 
 }

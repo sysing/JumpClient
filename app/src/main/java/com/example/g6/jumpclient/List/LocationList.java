@@ -30,7 +30,7 @@ public class LocationList extends ToolBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location_list);
+        setContentView(R.layout.location_list);
         mItemList = (RecyclerView) findViewById(R.id.locationList);
         mItemList.setHasFixedSize(true);
         mItemList.setLayoutManager(new LinearLayoutManager(this));
@@ -85,7 +85,7 @@ public class LocationList extends ToolBarActivity {
     }
 
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder{
+    protected static class ItemViewHolder extends RecyclerView.ViewHolder{
         View mView;
         String id;
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("restaurants");

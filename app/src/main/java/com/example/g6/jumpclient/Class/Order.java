@@ -1,15 +1,14 @@
 package com.example.g6.jumpclient.Class;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Created by g6 on 08-Mar-18.
  */
 
 public class Order {
-    public static final Integer DELETED = 0 , PENDING = 1, ACKNOWLEDGED = 2, READY = 3 , COMPLETED = 4;
-    private Float totalPrice;
-    private Map<Item, Integer> ItemQuantity;
+    public static final Integer DELETED = 0 , DRAFT = 1,  PENDING = 2, ACCEPTED = 3, READY = 4 , COMPLETED = 5, REJECTED = 6;
+    private ArrayList<OrderItem> iList;
     private String userKey,restaurantKey;
     private Long created,updated;
     private Integer status;
@@ -17,20 +16,12 @@ public class Order {
     public Order() {
     }
 
-    public Float getTotalPrice() {
-        return totalPrice;
+    public  ArrayList<OrderItem> getiList() {
+        return iList;
     }
 
-    public void setTotalPrice(Float totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public Map<Item, Integer> getItemQuantity() {
-        return ItemQuantity;
-    }
-
-    public void setItemQuantity(Map<Item, Integer> itemQuantity) {
-        ItemQuantity = itemQuantity;
+    public void setiList(ArrayList<OrderItem> iList) {
+        this.iList = iList;
     }
 
     public String getUserKey() {
@@ -71,5 +62,22 @@ public class Order {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+    public static String getStatusString(Integer status){
+        if (status == DELETED)
+            return "DELETED";
+        if (status == DRAFT)
+            return "DRAFT";
+        if (status == PENDING)
+            return "PENDING";
+        if (status == ACCEPTED)
+            return "ACCEPTED";
+        if (status == READY)
+            return "READY";
+        if (status == COMPLETED)
+            return "COMPLETED";
+        if (status == REJECTED)
+            return "REJECTED";
+        return "";
     }
 }

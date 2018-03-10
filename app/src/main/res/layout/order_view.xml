@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.g6.jumpclient.List.OrderView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/itemList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+        </android.support.v7.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/totalPrice"
+            android:layout_below="@+id/itemList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total Price: $0"
+            android:textSize="20sp"
+            android:onClick="submitOrderClicked"
+            />
+        <Button
+            android:id="@+id/button1"
+            android:layout_below="@+id/totalPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="button1"
+            android:visibility="gone"
+            android:onClick="buttonClicked"
+            />
+        <Button
+            android:id="@+id/button2"
+            android:layout_below="@+id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="button2"
+            android:visibility="gone"
+            android:onClick="buttonClicked"
+            />
+    </RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>
