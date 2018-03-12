@@ -45,8 +45,10 @@
             android:name=".List.LocationList"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".List.ToolBarActivity" />
-        <activity android:name=".List.OrderView" />
-        <activity android:name=".List.OrderList"></activity>
+        <activity android:name=".List.OrderView"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".List.OrderList"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

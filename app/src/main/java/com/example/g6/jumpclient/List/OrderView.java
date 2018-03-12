@@ -192,6 +192,7 @@ public class OrderView extends ToolBarActivity {
                         Intent intent = new Intent(getApplicationContext(), OrderList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        finishAfterTransition();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

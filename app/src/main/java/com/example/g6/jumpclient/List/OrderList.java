@@ -3,6 +3,7 @@ package com.example.g6.jumpclient.List;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -49,7 +50,7 @@ public class OrderList extends ToolBarActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static String userKey;
     private static final String TAG = "ViewOrder";
-    private static Integer filter;
+    private Integer filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +59,14 @@ public class OrderList extends ToolBarActivity {
         setContentView(R.layout.order_list);
         mItemList = (RecyclerView) findViewById(R.id.orderList);
         mItemList.setHasFixedSize(false);
-        mItemList.setLayoutManager(new LinearLayoutManager(this));
+        //recyclerView reverse
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager.setReverseLayout(true);
+        mLayoutManager.setStackFromEnd(true);
+        mItemList.setLayoutManager((mLayoutManager));
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        filter = getIntent().getIntExtra("filter",0);
+        filter = getIntent().getIntExtra("filter",Order.DELETED);
 
         //Check Login Status
         mAuth = FirebaseAuth.getInstance();
@@ -83,7 +89,7 @@ public class OrderList extends ToolBarActivity {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+                final User user = dataSnapshot.getValue(User.class);
                 if (user.getStatus().equals(User.VENDOR)) {
                     Query query = mDatabase.child("restaurants").orderByChild("vendorKey").equalTo(userKey).limitToFirst(1);
                     query.addValueEventListener(new ValueEventListener() {
@@ -93,8 +99,7 @@ public class OrderList extends ToolBarActivity {
                             for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
                                 restaurantKey = childSnapshot.getKey();
                             }
-                            Toast.makeText(getApplicationContext(),restaurantKey,Toast.LENGTH_SHORT).show();
-                            showRecycler("restaurantKey", restaurantKey);
+                            showRecycler("restaurantKey", restaurantKey, user.getViewOrdersTime());
                         }
 
                         @Override
@@ -106,7 +111,7 @@ public class OrderList extends ToolBarActivity {
                 }
                 if (user.getStatus().equals(User.USER)) {
                     {
-                        showRecycler("userKey", userKey);
+                        showRecycler("userKey", userKey, user.getViewOrdersTime());
                     }
                 }
             }
@@ -116,11 +121,11 @@ public class OrderList extends ToolBarActivity {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-
-
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("users").child(userKey);
+        myRef.child("viewOrdersTime").setValue(System.currentTimeMillis());
     }
 
-    private void showRecycler(final String keyType, final String key){
+    private void showRecycler(final String keyType, final String key, final Long viewOrdersTime){
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -128,18 +133,18 @@ public class OrderList extends ToolBarActivity {
                         Order.class,
                         R.layout.single_order_listng,
                         ItemViewHolder.class,
-                        mDatabase.child("orders").orderByChild(keyType).equalTo(key)//.orderByChild("updated")
+                        mDatabase.child("orders").orderByChild(keyType).equalTo(key)
                 ){
                     @Override
                     protected void populateViewHolder(final ItemViewHolder viewHolder, final Order order, final int position){
                         final String orderKey = getRef(position).getKey();
-                        if ( (order.getStatus()).equals(Order.DELETED)||
-                                ( !(filter.equals(Order.DELETED) && !(order.getStatus()).equals(filter)) ) ||
-                                (keyType.equals("restaurantKey") && order.getStatus().equals(Order.DRAFT))
+                        if ( order.getStatus().equals(Order.DELETED)||
+                                (keyType.equals("restaurantKey") && order.getStatus().equals(Order.DRAFT)) ||
+                                (!filter.equals(Order.DELETED) && !order.getStatus().equals(filter) )
                                 ){
                             viewHolder.hideLayout();
+                            Toast.makeText(getApplicationContext(),filter.toString(),Toast.LENGTH_SHORT).show();
                         }else{
-
                             String restaurantKey = order.getRestaurantKey();
                             DatabaseReference RestaurantRef = mDatabase.child("restaurants").child(restaurantKey);
                             RestaurantRef.addValueEventListener(new ValueEventListener() {
@@ -164,6 +169,9 @@ public class OrderList extends ToolBarActivity {
                             });
                             viewHolder.setUpdateTime(Util.getTimeString(order.getUpdated()));
                             viewHolder.setStatus(Order.getStatusString(order.getStatus()));
+                            if(order.getUpdated().compareTo(viewOrdersTime) > 0 ){
+                                viewHolder.setSeen(false);
+                            }
                             viewHolder.mView.setOnClickListener(new OnClickListener() { //Redirect to menu
                                 @Override
                                 public void onClick(View v) {
@@ -183,6 +191,7 @@ public class OrderList extends ToolBarActivity {
                 Log.w(TAG, "Failed to read value.", databaseError.toException());
             }
         });
+        updateViewOrdersTime(userKey);
     }
 
     protected static class ItemViewHolder extends RecyclerView.ViewHolder{
@@ -213,6 +222,13 @@ public class OrderList extends ToolBarActivity {
             TextView itemName = mView.findViewById(R.id.itemUpdateTime);
             itemName.setText(updateTime);
         }
+        public void setSeen(Boolean seen){
+            if(!seen){
+                TextView itemName = mView.findViewById(R.id.itemStatus);
+                itemName.setHighlightColor(Color.GREEN);
+            }
+        }
+
         public void hideLayout(){
             mView.setVisibility(GONE);
             RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)itemView.getLayoutParams();
@@ -260,7 +276,6 @@ public class OrderList extends ToolBarActivity {
                         })
                         .show();
                 break;
-
             case R.id.action_settings:
                 Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT)
                         .show();
@@ -270,17 +285,47 @@ public class OrderList extends ToolBarActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("filter",Order.DRAFT);
                 startActivity(intent);
+                break;
             case R.id.pending:
                 intent = new Intent(getApplicationContext(), OrderList.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("filter",Order.PENDING);
                 startActivity(intent);
-
+                break;
+            case R.id.accepted:
+                intent = new Intent(getApplicationContext(), OrderList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("filter",Order.ACCEPTED);
+                startActivity(intent);
+                break;
+            case R.id.rejected:
+                intent = new Intent(getApplicationContext(), OrderList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("filter",Order.REJECTED);
+                startActivity(intent);
+                break;
+            case R.id.ready:
+                intent = new Intent(getApplicationContext(), OrderList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("filter",Order.READY);
+                startActivity(intent);
+                break;
+            case R.id.completed:
+                intent = new Intent(getApplicationContext(), OrderList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("filter",Order.COMPLETED);
+                startActivity(intent);
+                break;
 
             default:
                 break;
         }
         return true;
+    }
+
+    public void updateViewOrdersTime(String userKey){
+        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("users").child(userKey);
+        mRef.child("viewOrdersTime").setValue(System.currentTimeMillis());
     }
 
 

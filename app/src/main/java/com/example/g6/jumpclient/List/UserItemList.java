@@ -70,8 +70,10 @@ public class UserItemList extends ToolBarActivity {
     }
 
     @Override
-    protected void onStart(){
-        super.onStart();
+    protected void onResume(){
+        super.onResume();
+        myItems.clear();
+        updateTotalPrice();
         mAuth.addAuthStateListener(mAuthListener);
         FirebaseRecyclerAdapter<Item, ItemViewHolder> mFirebaseAdapter  = new  FirebaseRecyclerAdapter <Item, ItemViewHolder>(
                 Item.class,
@@ -178,7 +180,11 @@ public class UserItemList extends ToolBarActivity {
             TextView itemQuantity= mView.findViewById(R.id.itemQuantity);
             itemQuantity.setText(quantity.toString());
             this.itemCounter.setQuantity(quantity);
-            myItems.put(this.itemKey,itemCounter);
+            if (this.intQuantity== 0 && myItems.get(this.itemKey)!= null){
+                myItems.remove(this.itemKey);
+            }else {
+                myItems.put(this.itemKey, itemCounter);
+            }
             updateTotalPrice();
         }
         public void setImage(Context ctx ,String image){

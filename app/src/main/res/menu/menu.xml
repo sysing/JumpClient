@@ -7,7 +7,8 @@
         android:orderInCategory="1"
         android:title="View Orders"
         android:icon="@drawable/menu_icon"
-        app:showAsAction="ifRoom" />
+        android:actionLayout="@layout/badge_counter"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_signOut"

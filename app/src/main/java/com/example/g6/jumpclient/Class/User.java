@@ -6,11 +6,19 @@ package com.example.g6.jumpclient.Class;
 
 public class User {
     public final static Integer DELETED = 0, USER = 1, VENDOR = 2 , ADMIN = 3;
-    private Long created,updated;
+    private Long created,updated,viewOrdersTime;
     private Integer status;
     private String name;
 
     public User() {
+    }
+
+    public Long getViewOrdersTime() {
+        return viewOrdersTime;
+    }
+
+    public void setViewOrdersTime(Long viewOrderTime) {
+        this.viewOrdersTime = viewOrderTime;
     }
 
     public Long getCreated() {

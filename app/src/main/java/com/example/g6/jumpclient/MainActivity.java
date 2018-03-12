@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                                 current_user.child("delete").setValue(0);
                                 current_user.child("created").setValue(System.currentTimeMillis());
                                 current_user.child("updated").setValue(System.currentTimeMillis());
+                                current_user.child("viewOrdersTime").setValue(System.currentTimeMillis());
 
                                 Toast.makeText(MainActivity.this, "Account Created",Toast.LENGTH_SHORT).show();
                                 Intent login = new Intent(MainActivity.this,LoginActivity.class);

@@ -3,31 +3,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <item
-        android:title="Filter by Status"
-        android:showAsAction="ifRoom">
+        android:id="@+id/action_filter"
+        android:orderInCategory="1"
+        android:title ="Filter Orders"
+        android:icon="@drawable/filter_icon"
+        app:showAsAction="always"
+        >
         <menu>
             <item
                 android:id="@+id/draft"
-                android:title="draft" />
+                android:title="Draft" />
             <item
                 android:id="@+id/pending"
-                android:title="pending" />
+                android:title="Pending" />
+            <item
+                android:id="@+id/accepted"
+                android:title="Accepted" />
+            <item
+                android:id="@+id/rejected"
+                android:title="Rejected" />
+            <item
+                android:id="@+id/ready"
+                android:title="Ready" />
+            <item
+                android:id="@+id/completed"
+                android:title="Completed" />
         </menu>
     </item>
     <item
         android:id="@+id/action_orders"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="View Orders"
         android:icon="@drawable/menu_icon"
         app:showAsAction="ifRoom" />
     
     <item
         android:id="@+id/action_signOut"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="Sign Out"/>
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="Settings">
     </item>
 
