@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.example.g6.jumpclient.Add.AddRestaurant;
 import com.example.g6.jumpclient.Class.BadgeDrawable;
 import com.example.g6.jumpclient.Class.Order;
+import com.example.g6.jumpclient.Class.Restaurant;
 import com.example.g6.jumpclient.Class.User;
 import com.example.g6.jumpclient.Class.Util;
 import com.example.g6.jumpclient.R;
@@ -35,11 +37,14 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class ToolBarActivity extends AppCompatActivity {
-    private static Integer notificationCount = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+    @Override
+    protected void onResume() {
+        invalidateOptionsMenu();
+        super.onResume();
     }
 
     @Override
@@ -54,44 +59,62 @@ public class ToolBarActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final User user = dataSnapshot.getValue(User.class);
-                String keyType ="";
                 if (user.getStatus() == User.USER) {
-                    keyType = "userKey";
-                }
-                if (user.getStatus() == User.VENDOR) {
-                    keyType = "vendorKey";
-                }
-                Query query = FirebaseDatabase.getInstance().getReference().child("orders").orderByChild(keyType).equalTo(userKey);
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (user.getViewOrdersTime() == null) {
-                            notificationCount = (int) dataSnapshot.getChildrenCount();
-                        }else{
+                    Query query = FirebaseDatabase.getInstance().getReference().child("orders").orderByChild("userKey").equalTo(userKey);
+                    query.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
                             Integer count = 0;
                             for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
                                 Order order = childSnapshot.getValue(Order.class);
-                                if (order.getUpdated().compareTo(user.getViewOrdersTime()) > 0 ){
+                                if (order.getStatus() != (Order.DRAFT) && order.getUpdated() > user.getViewOrdersTime()){
                                     count++;
                                 }
                             }
                             updateOrderNotification(menu,count);
                         }
-
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
+                if (user.getStatus() == User.VENDOR) {
+                    Query query = FirebaseDatabase.getInstance().getReference().child("restaurants").orderByChild("vendorKey").equalTo(userKey).limitToFirst(1);
+                    query.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String restaurantKey = "";
+                            for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                                restaurantKey = childSnapshot.getKey();
+                            }
+                            Query query = FirebaseDatabase.getInstance().getReference().child("orders").orderByChild("restaurantKey").equalTo(restaurantKey);
+                            query.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Integer count = 0;
+                                    for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                                        Order order = childSnapshot.getValue(Order.class);
+                                        if (order.getStatus() != (Order.DRAFT) && order.getUpdated() > user.getViewOrdersTime()){
+                                            count++;
+                                        }
+                                    }
+                                    updateOrderNotification(menu,count);
+                                }
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-
-        /**else {
-            BadgeCounter.hide(menu.findItem(R.id.action_orders));
-        }**/
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -136,15 +159,6 @@ public class ToolBarActivity extends AppCompatActivity {
     }
 
     public void viewOrders() {
-
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        /**
-        String userKey = mAuth.getCurrentUser().getUid();
-        DatabaseReference myRef = database.getReference("user").child(userKey).child("viewOrdersTime");
-        myRef.setValue(System.currentTimeMillis());
-         **/
         Intent intent = new Intent(getApplicationContext(), OrderList.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
@@ -157,6 +171,5 @@ public class ToolBarActivity extends AppCompatActivity {
                     BadgeCounter.BadgeColor.BLACK,
                     notificationCount);
         }
-        this.invalidateOptionsMenu();
     }
 }
