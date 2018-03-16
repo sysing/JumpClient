@@ -20,7 +20,7 @@
 
             <TextView
                 android:id="@+id/restaurantName"
-                android:layout_width="200dp"
+                android:layout_width="175dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@+id/restaurantImage"
@@ -43,24 +43,39 @@
                 android:id="@+id/editButton"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="10dp"
                 android:layout_below="@+id/restaurantDesc"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_toRightOf="@+id/restaurantImage"
                 android:background="@drawable/edit_icon"
-                android:onClick="editButtonClicked"/>
+                android:onClick="editButtonClicked" />
 
             <Button
                 android:id="@+id/deleteButton"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="10dp"
                 android:layout_below="@+id/restaurantDesc"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_toRightOf="@+id/editButton"
                 android:background="@drawable/delete_icon"
-                android:onClick="deleteButtonClicked"/>
+                android:onClick="deleteButtonClicked" />
 
+            <RatingBar
+                android:id="@+id/ratingDisplay"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:layout_toEndOf="@+id/restaurantName" />
+            <TextView
+                android:id="@+id/ratingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ratingText"
+                android:gravity="right"
+                android:layout_below="@id/ratingDisplay"
+                android:layout_toEndOf="@+id/restaurantName" />
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

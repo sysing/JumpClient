@@ -45,6 +45,17 @@
                 />
 
             <TextView
+                android:id ="@+id/itemCalorie"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/itemDesc"
+                android:layout_toRightOf="@+id/itemImage"
+                android:paddingLeft ="10dp"
+                android:text="Calories"
+                android:textColor="#000000"
+                />
+
+            <TextView
                 android:id="@+id/itemPrice"
                 android:layout_marginTop="5dp"
                 android:layout_width="100dp"
@@ -60,9 +71,9 @@
                 android:id="@+id/itemQuantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/itemDesc"
+                android:layout_below="@+id/itemCalorie"
                 android:layout_toRightOf="@+id/itemPlus"
-                android:padding= "20dp"
+                android:padding= "10dp"
                 android:text="0"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -71,18 +82,19 @@
                 android:id="@+id/itemPlus"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_below="@+id/itemDesc"
+                android:layout_below="@+id/itemCalorie"
                 android:layout_toRightOf="@+id/itemImage"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
                 android:background="@android:drawable/arrow_up_float"
                 />
             <Button
                 android:id="@+id/itemMinus"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_below="@+id/itemDesc"
+                android:layout_below="@+id/itemCalorie"
                 android:layout_toRightOf="@+id/itemQuantity"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:background="@android:drawable/arrow_down_float"
                 />
         </RelativeLayout>

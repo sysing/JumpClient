@@ -12,8 +12,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.g6.jumpclient.Class.Item;
-import com.example.g6.jumpclient.List.VendorItemList;
+import com.example.g6.jumpclient.Class.Locale;
+import com.example.g6.jumpclient.List.LocaleList;
 import com.example.g6.jumpclient.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -23,16 +23,16 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
-public class AddItem extends AppCompatActivity {
+public class AddLocale extends AppCompatActivity {
 
-    private ImageButton itemImage;
+    private ImageButton localeImage;
     private static final int GALLREQ = 1;
-    private EditText name, desc, price, calorie;
-    private Button addItemButton;
+    private EditText name, desc, price;
+    private Button addLocaleButton;
     private Uri uri = null;
     private StorageReference storageReference = null;
     private DatabaseReference mRef ;
-    private String restaurantKey,itemKey;
+    private String localeKey;
     private Integer keyType;
     public static final Integer ADD = 1,UPDATE = 2;
 
@@ -40,23 +40,21 @@ public class AddItem extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_item);
+        setContentView(R.layout.activity_add_locale);
 
-        name = (EditText) findViewById(R.id.itemName);
-        desc = (EditText) findViewById(R.id.itemDesc);
-        price = (EditText) findViewById(R.id.itemPrice);
-        calorie = (EditText) findViewById(R.id.itemCalorie);
-        addItemButton = (Button) findViewById(R.id.addItemButton);
+        name = (EditText) findViewById(R.id.localeName);
+        desc = (EditText) findViewById(R.id.localeDesc);
+        addLocaleButton = (Button) findViewById(R.id.addLocaleButton);
         storageReference = FirebaseStorage.getInstance().getReference();
-        mRef = FirebaseDatabase.getInstance().getReference("items");
-        restaurantKey = getIntent().getExtras().getString("restaurantKey");
+        mRef = FirebaseDatabase.getInstance().getReference("locales");
+        localeKey = getIntent().getExtras().getString("localeKey");
 
         keyType = getIntent().getExtras().getInt("type");
-        if (keyType.equals(UPDATE)){ //check if updating existing restaurant
-            addItemButton.setText("Update item");
-            itemKey = getIntent().getExtras().getString("itemKey");
-            mRef = mRef.child(itemKey);
-        }else if (keyType.equals(ADD)){  //adding new restaurant
+        if (keyType.equals(UPDATE)){ //check if updating existing locale
+            addLocaleButton.setText("Update locale");
+            localeKey = getIntent().getExtras().getString("localeKey");
+            mRef = mRef.child(localeKey);
+        }else if (keyType.equals(ADD)){  //adding new locale
             mRef = mRef.push();
         }
     }
@@ -72,35 +70,21 @@ public class AddItem extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLREQ && RESULT_OK == resultCode){
             uri = data.getData();
-            itemImage = (ImageButton) findViewById(R.id.itemImage);
+            localeImage = (ImageButton) findViewById(R.id.localeImage);
             Glide.with(getApplicationContext())
                     .load(uri)
                     .error(R.mipmap.warning_icon)
                     .override(200, 200)
                     .fitCenter()
-                    .into(itemImage);
+                    .into(localeImage);
         }
     }
 
-    public void addItemClicked(View view){
+    public void addLocaleButtonClicked(View view){
         final String name_text= name.getText().toString().trim();
         final String desc_text= desc.getText().toString().trim();
-        final String price_text= price.getText().toString().trim();
-        final String calorie_text = calorie.getText().toString().trim();
-        if (TextUtils.isEmpty(name_text) || TextUtils.isEmpty(desc_text)|| TextUtils.isEmpty(price_text) || (uri == null) ) {
-            Toast.makeText(AddItem.this, "Please upload item image & enter name,description,price", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        try {
-            float temp = Float.parseFloat(price_text);
-        } catch (NumberFormatException ex) {
-            Toast.makeText(AddItem.this, "Please enter float value price", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        try {
-            float temp = Float.parseFloat(calorie_text);
-        } catch (NumberFormatException ex) {
-            Toast.makeText(AddItem.this, "Please enter float value calorie", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(name_text) || TextUtils.isEmpty(desc_text)|| (uri == null) ) {
+            Toast.makeText(AddLocale.this, "Please upload locale image & enter name,description,price", Toast.LENGTH_SHORT).show();
             return;
         }
         StorageReference filepath = storageReference.child(uri.getLastPathSegment()) ;
@@ -111,19 +95,19 @@ public class AddItem extends AppCompatActivity {
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         mRef.child("name").setValue(name_text);
                         mRef.child("desc").setValue(desc_text);
-                        mRef.child("price").setValue(Float.parseFloat(price_text));
-                        mRef.child("cal").setValue(Float.parseFloat(calorie_text));
                         mRef.child("image").setValue(downloadUrl.toString());
-                        mRef.child("status").setValue(Item.VALID);
+                        mRef.child("status").setValue(Locale.VALID);
+                        mRef.child("latitude").setValue(0.0);
+                        mRef.child("longitude").setValue(0.0);
                         mRef.child("updated").setValue(System.currentTimeMillis());
                         if (keyType.equals(ADD)) {
                             mRef.child("created").setValue(System.currentTimeMillis());
-                            mRef.child("restaurantKey").setValue(restaurantKey);
+                            mRef.child("localeKey").setValue(localeKey);
                         }
 
-                        Toast.makeText(AddItem.this, "Item added", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(AddItem.this, VendorItemList.class);
-                        intent.putExtra("restaurantKey", restaurantKey);
+                        Toast.makeText(AddLocale.this, "Locale added", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(AddLocale.this, LocaleList.class);
+                        intent.putExtra("localeKey", localeKey);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }

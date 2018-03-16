@@ -2,36 +2,24 @@ package com.example.g6.jumpclient.List;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.g6.jumpclient.Add.AddRestaurant;
-import com.example.g6.jumpclient.Class.BadgeDrawable;
+import com.example.g6.jumpclient.Add.AddUserSettings;
+import com.example.g6.jumpclient.Add.ViewUserSettings;
 import com.example.g6.jumpclient.Class.Order;
-import com.example.g6.jumpclient.Class.Restaurant;
 import com.example.g6.jumpclient.Class.User;
-import com.example.g6.jumpclient.Class.Util;
 import com.example.g6.jumpclient.R;
 import com.github.juanlabrador.badgecounter.BadgeCounter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -148,8 +136,8 @@ public class ToolBarActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_settings:
-                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT)
-                        .show();
+                Intent intent = new Intent(getApplicationContext(),ViewUserSettings.class);
+                startActivity(intent);
                 break;
 
             default:

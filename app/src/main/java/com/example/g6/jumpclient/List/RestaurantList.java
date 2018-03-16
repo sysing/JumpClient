@@ -10,10 +10,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.g6.jumpclient.Add.AddRestaurant;
 import com.example.g6.jumpclient.Class.Restaurant;
+import com.example.g6.jumpclient.Class.Score;
 import com.example.g6.jumpclient.Class.User;
 import com.example.g6.jumpclient.MainActivity;
 import com.example.g6.jumpclient.R;
@@ -36,7 +38,7 @@ public class RestaurantList extends ToolBarActivity {
         private DatabaseReference mDatabase;
         private FirebaseAuth mAuth;
         private FirebaseAuth.AuthStateListener mAuthListener;
-        private static String locationKey, userKey;
+        private static String localeKey, userKey;
         private Integer user_status;
         private Button addRestaurantButton;
         private static final String TAG = "RestaurantList";
@@ -51,7 +53,7 @@ public class RestaurantList extends ToolBarActivity {
             mItemList.setLayoutManager(new LinearLayoutManager(this));
             mDatabase = FirebaseDatabase.getInstance().getReference();
             addRestaurantButton = (Button) findViewById(R.id.addRestaurantButton);
-            locationKey = getIntent().getExtras().getString("locationKey");
+            localeKey = getIntent().getExtras().getString("localeKey");
 
             //Check Login Status
             mAuth = FirebaseAuth.getInstance();
@@ -94,7 +96,7 @@ public class RestaurantList extends ToolBarActivity {
             @Override
             protected void populateViewHolder(ItemViewHolder viewHolder, Restaurant model, final int position){
                 final String restaurantKey = getRef(position).getKey();
-                if (!(model.getLocationKey().equals(locationKey)) ||
+                if (!(model.getLocaleKey().equals(localeKey)) ||
                         (user_status == User.VENDOR && !(model.getVendorKey().equals(userKey))) ||
                         model.getStatus().intValue() == Restaurant.DELETED.intValue() ){
                     viewHolder.hideLayout();
@@ -102,7 +104,13 @@ public class RestaurantList extends ToolBarActivity {
                     viewHolder.configLayout(user_status,restaurantKey);
                     viewHolder.setImage(getApplicationContext(), model.getImage());
                     viewHolder.setName(model.getName());
+                    if (model.getWaitTime() != null){
+                        double waitTimeMinutes = (model.getWaitTime()/60000);
+                        String waitTimeStr = "Estimated Wait Time: " + String.format("%.1f", waitTimeMinutes) + "mins" ;
+                        model.setDesc(waitTimeStr);
+                    }
                     viewHolder.setDesc(model.getDesc());
+                    viewHolder.setRating((float)model.getWilsonRating());
                     viewHolder.mView.setOnClickListener(new OnClickListener() { //Redirect to menu
                         @Override
                         public void onClick(View v) {
@@ -161,7 +169,7 @@ public class RestaurantList extends ToolBarActivity {
                         String restaurantKey = v.getTag().toString();
                         Intent intent = new Intent(v.getContext(), AddRestaurant.class);
                         intent.putExtra("type", AddRestaurant.UPDATE);
-                        intent.putExtra("locationKey", locationKey);
+                        intent.putExtra("localeKey", localeKey);
                         intent.putExtra("restaurantKey", restaurantKey);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         v.getContext().startActivity(intent);
@@ -182,6 +190,12 @@ public class RestaurantList extends ToolBarActivity {
             TextView itemName = mView.findViewById(R.id.restaurantDesc);
             itemName.setText(desc);
         }
+        public void setRating(float rating){
+            RatingBar ratingBar = mView.findViewById(R.id.ratingDisplay);
+            TextView ratingText = mView.findViewById(R.id.ratingText);
+            ratingBar.setRating(rating);
+            ratingText.setText("Rating:" + String.format("%.2f", rating));
+        }
         public void setId(String id){
             this.id = id;
         }
@@ -197,7 +211,7 @@ public class RestaurantList extends ToolBarActivity {
     public void addRestaurantClicked (View view) {
         Intent intent = new Intent(RestaurantList.this, AddRestaurant.class);
         intent.putExtra("type",AddRestaurant.ADD);
-        intent.putExtra("locationKey",locationKey);
+        intent.putExtra("localeKey",localeKey);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
          startActivity(intent);
     }

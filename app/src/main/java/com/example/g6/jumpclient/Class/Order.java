@@ -7,13 +7,37 @@ import java.util.ArrayList;
  */
 
 public class Order {
-    public static final Integer DELETED = 0 , DRAFT = 1,  PENDING = 2, ACCEPTED = 3, READY = 4 , COMPLETED = 5, REJECTED = 6;
+    public static final Integer DELETED = 0 , DRAFT = 1,  PENDING = 2, REJECTED = 3, ACCEPTED = 4 , READY = 5, COMPLETED = 6 , RATED = 7;
     private ArrayList<OrderItem> iList;
     private String userKey,restaurantKey;
-    private Long created,updated;
-    private Integer status;
+    private Long created,updated,submitted,readied;
+    private Integer status,rating;
 
     public Order() {
+    }
+
+    public Long getSubmitted() {
+        return submitted;
+    }
+
+    public void setSubmitted(Long submitted) {
+        this.submitted = submitted;
+    }
+
+    public Long getReadied() {
+        return readied;
+    }
+
+    public void setReadied(Long readied) {
+        this.readied = readied;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
     public  ArrayList<OrderItem> getiList() {
@@ -64,20 +88,22 @@ public class Order {
         this.status = status;
     }
     public static String getStatusString(Integer status){
-        if (status == DELETED)
+        if (status.equals(DELETED))
             return "DELETED";
-        if (status == DRAFT)
+        if (status.equals(DRAFT))
             return "DRAFT";
-        if (status == PENDING)
+        if (status.equals(PENDING))
             return "PENDING";
-        if (status == ACCEPTED)
+        if (status.equals(ACCEPTED))
             return "ACCEPTED";
-        if (status == READY)
+        if (status.equals(READY))
             return "READY";
-        if (status == COMPLETED)
+        if (status.equals(COMPLETED))
             return "COMPLETED";
-        if (status == REJECTED)
+        if (status.equals(REJECTED))
             return "REJECTED";
+        if (status.equals(RATED))
+            return "RATED";
         return "";
     }
 }

@@ -6,23 +6,31 @@ import java.util.List;
  * Created by g6 on 05-Mar-18.
  */
 
-public class Location {
+public class Locale {
     public static final Integer DELETED = 0, VALID = 1;
     private String image,name,desc;
     private Integer status;
-    private long created,updated;
+    private Long created,updated;
+    private Double latitude,longitude;
 
-    public Location(){
+    public Locale(){
 
     }
 
-    public Location(String image, String name, String desc, Integer delete, Long created, Long updated, List<String> restaurantKeys) {
-        this.image = image;
-        this.name = name;
-        this.desc = desc;
-        this.status = delete;
-        this.created = created;
-        this.updated = updated;
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public String getImage() {

@@ -68,6 +68,7 @@ public class VendorItemList extends ToolBarActivity {
                     viewHolder.setImage(getApplicationContext(),model.getImage());
                     viewHolder.setName(model.getName());
                     viewHolder.setDesc(model.getDesc());
+                    viewHolder.setCal(model.getCal());
                     viewHolder.setPrice(model.getPrice());
                     viewHolder.configLayout(itemKey);
                 }
@@ -130,6 +131,11 @@ public class VendorItemList extends ToolBarActivity {
         public void setDesc(String desc){
             TextView itemDesc = mView.findViewById(R.id.itemDesc);
             itemDesc.setText(desc);
+        }
+        public void setCal(Float cal){
+            TextView itemCal =  mView.findViewById(R.id.itemCalorie);
+            String displayCal =  cal.toString() + " kCal";
+            itemCal.setText(displayCal);
         }
         public void setPrice(Float price){
             TextView itemPrice =  mView.findViewById(R.id.itemPrice);

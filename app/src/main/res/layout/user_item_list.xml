@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.g6.jumpclient.List.OrderList"
+    tools:context="com.example.g6.jumpclient.List.UserItemList"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -28,9 +28,18 @@
             android:textSize="20sp"
             android:onClick="submitOrderClicked"
             />
+        <TextView
+            android:id="@+id/totalCal"
+            android:layout_below="@+id/totalPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total Calories: 0 kCal"
+            android:textSize="20sp"
+            android:onClick="submitOrderClicked"
+            />
         <Button
             android:id="@+id/submitOrderButton"
-            android:layout_below="@+id/totalPrice"
+            android:layout_below="@+id/totalCal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Submit Order"

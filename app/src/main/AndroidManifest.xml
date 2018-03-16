@@ -4,14 +4,13 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -42,13 +41,39 @@
             android:name=".Add.AddRestaurant"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".List.LocationList"
+            android:name=".Add.AddLocale"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".List.LocaleList"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".List.ToolBarActivity" />
-        <activity android:name=".List.OrderView"
+        <activity
+            android:name=".List.OrderView"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".List.OrderList"
+        <activity
+            android:name=".List.OrderList"
             android:parentActivityName=".MainActivity" />
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".MapsActivity"
+            android:label="@string/title_activity_maps">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.g6.jumpclient.List.LocaleList" />
+        </activity>
+        <activity android:name=".Add.AddUserSettings" />
+        <activity android:name=".Add.ViewUserSettings"></activity>
     </application>
 
 </manifest>

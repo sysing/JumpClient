@@ -5,47 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.g6.jumpclient.Add.AddItem">
+    tools:context="com.example.g6.jumpclient.Add.AddLocale">
 
     <ImageButton
-        android:id="@+id/itemImage"
+        android:id="@+id/localeImage"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:scaleType="fitXY"
         android:onClick="imageButtonClicked"
         />
     <EditText
-        android:id="@+id/itemName"
+        android:id="@+id/localeName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter item name"
+        android:hint="Enter locale name"
         />
     <EditText
-        android:id="@+id/itemDesc"
-        android:hint="Enter item description"
+        android:id="@+id/localeDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
-    <EditText
-        android:id="@+id/itemPrice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:hint="Enter item price"
-        />
-    <EditText
-        android:id="@+id/itemCalorie"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:hint="Enter item calorie"
+        android:hint="Enter locale description"
         />
     <Button
-        android:id="@+id/addItemButton"
+        android:id="@+id/addLocaleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add item to menu"
-        android:onClick="addItemClicked"
+        android:text="Add Locale"
+        android:onClick="addLocaleButtonClicked"
         />
 
 </LinearLayout>

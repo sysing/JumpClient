@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.g6.jumpclient.Class.Restaurant;
 import com.example.g6.jumpclient.List.RestaurantList;
 import com.example.g6.jumpclient.R;
@@ -31,7 +32,7 @@ public class AddRestaurant extends AppCompatActivity {
     private Uri uri = null;
     private StorageReference storageReference = null;
     private DatabaseReference mRef;
-    private String restaurantKey, locationKey;
+    private String restaurantKey, localeKey;
     private Integer keyType;
     private FirebaseAuth mAuth;
     public static final Integer ADD = 1,UPDATE = 2;
@@ -50,7 +51,7 @@ public class AddRestaurant extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
         mRef = FirebaseDatabase.getInstance().getReference("restaurants");
         mAuth = FirebaseAuth.getInstance();
-        locationKey = getIntent().getExtras().getString("locationKey");
+        localeKey = getIntent().getExtras().getString("localeKey");
         keyType = getIntent().getExtras().getInt("type");
         if (keyType.equals(UPDATE)){ //check if updating existing restaurant
             addRestaurantButton.setText("Update Restaurant");
@@ -76,6 +77,12 @@ public class AddRestaurant extends AppCompatActivity {
         if (requestCode == GALLREQ && RESULT_OK == resultCode){
             uri = data.getData();
             restaurantImage.setImageURI(uri);
+            Glide.with(getApplicationContext())
+                    .load(uri)
+                    .error(R.mipmap.warning_icon)
+                    .override(200, 200)
+                    .fitCenter()
+                    .into(restaurantImage);
         }
     }
 
@@ -97,14 +104,14 @@ public class AddRestaurant extends AppCompatActivity {
                             mRef.child("updated").setValue(System.currentTimeMillis());
                             if (keyType.equals(ADD)) {
                                 mRef.child("created").setValue(System.currentTimeMillis());
-                                mRef.child("locationKey").setValue(locationKey);
+                                mRef.child("localeKey").setValue(localeKey);
                                 mRef.child("vendorKey").setValue(mAuth.getCurrentUser().getUid());
                             }
                             Toast.makeText(AddRestaurant.this,"Restaurant Added",Toast.LENGTH_SHORT).show();
 
                             Intent intent = new Intent(AddRestaurant.this, RestaurantList.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("locationKey",locationKey);
+                            intent.putExtra("localeKey",localeKey);
                             startActivity(intent);
 
                         }

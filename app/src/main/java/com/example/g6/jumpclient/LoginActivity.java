@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.g6.jumpclient.List.LocationList;
+import com.example.g6.jumpclient.List.LocaleList;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -51,9 +51,10 @@ public class LoginActivity extends AppCompatActivity {
                     if(task.isSuccessful()){
                         Toast.makeText(LoginActivity.this, "Sign In Successful",
                                 Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(LoginActivity.this, LocationList.class);
+                        Intent intent = new Intent(LoginActivity.this, LocaleList.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
+                        finishAfterTransition();
                     }else{
                         Toast.makeText(LoginActivity.this, "Sign In Failed",
                                 Toast.LENGTH_SHORT).show();
@@ -69,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(user_id)){
-                    Intent intent = new Intent(LoginActivity.this, LocationList.class);
+                    Intent intent = new Intent(LoginActivity.this, LocaleList.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 }

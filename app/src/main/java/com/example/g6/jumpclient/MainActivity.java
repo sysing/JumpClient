@@ -11,7 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.g6.jumpclient.Class.User;
-import com.example.g6.jumpclient.List.LocationList;
+import com.example.g6.jumpclient.List.LocaleList;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser()!= null){
-            Intent intent =  new Intent(MainActivity.this, LocationList.class);
+            Intent intent =  new Intent(MainActivity.this, LocaleList.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     }
 /** test buttons **/
     public void test (View view) {
-        Intent intent = new Intent(MainActivity.this, LocationList.class);
+        Intent intent = new Intent(MainActivity.this, LocaleList.class);
         startActivity(intent);
     }
 

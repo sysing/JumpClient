@@ -38,6 +38,16 @@
                 android:paddingLeft="10dp"
                 android:text="Description"
                 android:textColor="#000000" />
+            <TextView
+                android:id ="@+id/itemCalorie"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/itemDesc"
+                android:layout_toRightOf="@+id/itemImage"
+                android:paddingLeft ="10dp"
+                android:text="Calories"
+                android:textColor="#000000"
+                />
 
             <TextView
                 android:id="@+id/itemPrice"
@@ -58,7 +68,7 @@
                 android:layout_height="25dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
-                android:layout_below="@+id/itemDesc"
+                android:layout_below="@+id/itemCalorie"
                 android:layout_toRightOf="@+id/itemImage"
                 android:background="@drawable/edit_icon"
                 android:onClick="editButtonClicked"/>
@@ -69,7 +79,7 @@
                 android:layout_height="25dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
-                android:layout_below="@+id/itemDesc"
+                android:layout_below="@+id/itemCalorie"
                 android:layout_toRightOf="@+id/editButton"
                 android:background="@drawable/delete_icon"
                 android:onClick="deleteButtonClicked"/>

@@ -7,27 +7,21 @@ package com.example.g6.jumpclient.Class;
 public class Item {
     public static final Integer DELETED = 0, VALID = 1;
     private String image, name, desc, restaurantKey;
-    private Float price;
+    private Float price,cal;
     private Integer status;
     private Long created, updated;
 
 
-    public Item(String image, String name, String desc, Float price, String restaurantKey, Integer status, Long created, Long updated) {
-
-        this.image = image;
-        this.name = name;
-        this.desc = desc;
-        this.price = price;
-        this.restaurantKey = restaurantKey;
-
-        this.status = status;
-        this.created = created;
-        this.updated = updated;
-    }
-
     public Item() {
     }
 
+    public Float getCal() {
+        return cal;
+    }
+
+    public void setCal(Float cal) {
+        this.cal = cal;
+    }
 
     public String getImage() {
         return image;

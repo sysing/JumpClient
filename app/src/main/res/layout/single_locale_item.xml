@@ -14,40 +14,47 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/locationImage"
+                android:id="@+id/localeImage"
                 android:layout_width="100dp"
                 android:layout_height="100dp" />
 
             <TextView
-                android:id="@+id/locationName"
+                android:id="@+id/localeName"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_toRightOf="@+id/locationImage"
+                android:layout_toRightOf="@+id/localeImage"
                 android:padding="10dp"
                 android:text="Name"
                 android:textColor="#000000"
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/locationDesc"
+                android:id="@+id/localeDesc"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/locationName"
-                android:layout_toRightOf="@+id/locationImage"
+                android:layout_below="@+id/localeName"
+                android:layout_toRightOf="@+id/localeImage"
                 android:paddingLeft="10dp"
                 android:text="Description"
                 android:textColor="#000000" />
             <TextView
-                android:id="@+id/locationDistance"
+                android:id="@+id/localeDistance"
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/locationName"
-                android:layout_toRightOf="@+id/locationDesc"
+                android:layout_toRightOf="@+id/localeName"
                 android:paddingLeft="10dp"
                 android:text="Distance"
                 android:textColor="#000000" />
-
+            <Button
+                android:id="@+id/mapButton"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/localeName"
+                android:layout_toRightOf="@+id/localeDesc"
+                android:paddingLeft="10dp"
+                android:background= "@mipmap/location_icon"
+                android:textColor="#000000" />
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

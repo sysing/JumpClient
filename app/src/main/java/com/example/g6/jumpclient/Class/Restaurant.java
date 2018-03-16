@@ -6,23 +6,38 @@ package com.example.g6.jumpclient.Class;
 
 public class Restaurant {
     public static final Integer DELETED = 0, VALID = 1;
-    private String image,name,desc,locationKey,vendorKey;
+    private String image,name,desc,localeKey,vendorKey;
     private Integer status;
     private Long created,updated;
+    private Integer upvotes,downvotes;
+    private Double waitTime;
 
     public Restaurant(){
 
     }
 
-    public Restaurant(String image, String name, String desc, String locationKey, String vendorKey, Integer status, Long created, Long updated) {
-        this.image = image;
-        this.name = name;
-        this.desc = desc;
-        this.locationKey = locationKey;
-        this.vendorKey = vendorKey;
-        this.status = status;
-        this.created = created;
-        this.updated = updated;
+    public Integer getUpvotes() {
+        return upvotes;
+    }
+
+    public void setUpvotes(Integer upvotes) {
+        this.upvotes = upvotes;
+    }
+
+    public Integer getDownvotes() {
+        return downvotes;
+    }
+
+    public void setDownvotes(Integer downvotes) {
+        this.downvotes = downvotes;
+    }
+
+    public Double getWaitTime() {
+        return waitTime;
+    }
+
+    public void setWaitTime(Double waitTime) {
+        this.waitTime = waitTime;
     }
 
     public String getImage() {
@@ -73,12 +88,12 @@ public class Restaurant {
         this.updated = updated;
     }
 
-    public String getLocationKey() {
-        return locationKey;
+    public String getLocaleKey() {
+        return localeKey;
     }
 
-    public void setLocationKey(String locationKey) {
-        this.locationKey = locationKey;
+    public void setLocaleKey(String localeKey) {
+        this.localeKey = localeKey;
     }
 
     public String getVendorKey() {
@@ -87,6 +102,9 @@ public class Restaurant {
 
     public void setVendorKey(String vendorKey) {
         this.vendorKey = vendorKey;
+    }
+    public double getWilsonRating() {
+        return Score.wilsonRating((double)this.getUpvotes(),(double)this.getDownvotes());
     }
 }
 

@@ -2,6 +2,7 @@ package com.example.g6.jumpclient.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,12 +16,16 @@ import android.widget.Toast;
 import com.example.g6.jumpclient.Class.Item;
 import com.example.g6.jumpclient.Class.Order;
 import com.example.g6.jumpclient.Class.OrderItem;
+import com.example.g6.jumpclient.Class.User;
 import com.example.g6.jumpclient.MainActivity;
 import com.example.g6.jumpclient.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -36,8 +41,9 @@ public class UserItemList extends ToolBarActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String restaurantKey, userKey;
     private Button button1,button2;
-    private static TextView tPriceView;
+    private static TextView tPriceView, tCalView;
     private static Map<String,ItemCounter> myItems = new HashMap<>();
+    private static double mealIntake,getTargetWeekWeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +52,27 @@ public class UserItemList extends ToolBarActivity {
         restaurantKey = getIntent().getExtras().getString("restaurantKey");
         mItemList = (RecyclerView) findViewById(R.id.itemList);
         tPriceView = (TextView) findViewById(R.id.totalPrice);
+        tCalView = (TextView) findViewById(R.id.totalCal);
 
         myItems.clear();
         updateTotalPrice();
+        updateTotalCal();
         mItemList.setHasFixedSize(false);
         mItemList.setLayoutManager(new LinearLayoutManager(this));
         mRef = FirebaseDatabase.getInstance().getReference();
         //Check Login Status
         mAuth = FirebaseAuth.getInstance();
         userKey = mAuth.getCurrentUser().getUid();
+        mRef.child("users").child(userKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                getTargetWeekWeight = user.getTargetWeekWeight();
+                mealIntake = user.getMealIntake();
+            }
+            public void onCancelled(DatabaseError error) {
+            }
+        });
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -92,6 +110,7 @@ public class UserItemList extends ToolBarActivity {
                     viewHolder.setName(model.getName());
                     viewHolder.setDesc(model.getDesc());
                     viewHolder.setPrice(model.getPrice());
+                    viewHolder.setCal(model.getCal());
                     viewHolder.setTag(itemKey);
                 }
             }
@@ -107,13 +126,26 @@ public class UserItemList extends ToolBarActivity {
         String tPriceString = "Total Price: $" + tPrice.toString();
         tPriceView.setText(tPriceString);
     }
+    public static void updateTotalCal(){
+        Float tCal = 0.0f;
+        for (Map.Entry<String, ItemCounter> entry : myItems.entrySet()) {
+            tCal += entry.getValue().getQuantity() * entry.getValue().getCalories();
+        }
+        String tCalString = "Total Calories: " + tCal.toString() +" kCal";
+        tCalView.setText(tCalString);
+        if ( tCal < mealIntake  == getTargetWeekWeight < 0){
+            tCalView.setTextColor(Color.GREEN);
+        }else{
+            tCalView.setTextColor(Color.RED);
+        }
+    }
 
     public void submitOrderClicked(View view){
-        String orderKey = uploadOrder();
         if (myItems.isEmpty()){
             Toast.makeText(this, "You did not order any item!",Toast.LENGTH_SHORT).show();
             return;
         }
+        String orderKey = uploadOrder();
         Intent intent = new Intent(UserItemList.this, OrderView.class);
         intent.putExtra("orderKey",orderKey);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -141,7 +173,7 @@ public class UserItemList extends ToolBarActivity {
     protected static class ItemViewHolder extends RecyclerView.ViewHolder{
         View mView;
         Integer intQuantity = 0;
-        ItemCounter itemCounter = new ItemCounter(0,0.0f);
+        ItemCounter itemCounter = new ItemCounter(0,0.0f,0.0f);
         String itemKey;
         public ItemViewHolder(View itemView){
             super(itemView);
@@ -186,6 +218,7 @@ public class UserItemList extends ToolBarActivity {
                 myItems.put(this.itemKey, itemCounter);
             }
             updateTotalPrice();
+            updateTotalCal();
         }
         public void setImage(Context ctx ,String image){
             ImageView itemImage = mView.findViewById(R.id.itemImage);
@@ -205,6 +238,12 @@ public class UserItemList extends ToolBarActivity {
             itemPrice.setText(displayPrice);
             this.itemCounter.setPrice(price);
         }
+        public void setCal(Float cal){
+            TextView itemCal =  mView.findViewById(R.id.itemCalorie);
+            String displayCal =  cal.toString() + " kCal";
+            itemCal.setText(displayCal);
+            this.itemCounter.setCalories(cal);
+        }
         public void hideLayout(){
             mView.setVisibility(View.GONE);
             RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)itemView.getLayoutParams();
@@ -216,13 +255,23 @@ public class UserItemList extends ToolBarActivity {
     protected static class ItemCounter{
         private Integer quantity;
         private Float price;
+        private Float calories;
 
         public ItemCounter() {
         }
 
-        public ItemCounter(Integer quantity, Float price) {
+        public ItemCounter(Integer quantity, Float price, Float calories) {
             this.quantity = quantity;
             this.price = price;
+            this.calories = calories;
+        }
+
+        public Float getCalories() {
+            return calories;
+        }
+
+        public void setCalories(Float calories) {
+            this.calories = calories;
         }
 
         public Integer getQuantity() {

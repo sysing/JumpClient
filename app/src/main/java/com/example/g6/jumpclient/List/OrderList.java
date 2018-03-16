@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.g6.jumpclient.Add.ViewUserSettings;
 import com.example.g6.jumpclient.Class.Order;
 import com.example.g6.jumpclient.Class.OrderItem;
 import com.example.g6.jumpclient.Class.Restaurant;
@@ -89,7 +90,8 @@ public class OrderList extends ToolBarActivity {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final User user = dataSnapshot.getValue(User.class);
+                User user = dataSnapshot.getValue(User.class);
+                final Long viewOrdersTime = user.getViewOrdersTime();
                 if (user.getStatus().equals(User.VENDOR)) {
                     Query query = mDatabase.child("restaurants").orderByChild("vendorKey").equalTo(userKey).limitToFirst(1);
                     query.addValueEventListener(new ValueEventListener() {
@@ -99,7 +101,7 @@ public class OrderList extends ToolBarActivity {
                             for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
                                 restaurantKey = childSnapshot.getKey();
                             }
-                            showRecycler("restaurantKey", restaurantKey, user.getViewOrdersTime());
+                            showRecycler("restaurantKey", restaurantKey, viewOrdersTime);
                         }
 
                         @Override
@@ -110,9 +112,7 @@ public class OrderList extends ToolBarActivity {
                     });
                 }
                 if (user.getStatus().equals(User.USER)) {
-                    {
-                        showRecycler("userKey", userKey, user.getViewOrdersTime());
-                    }
+                    showRecycler("userKey", userKey, viewOrdersTime);
                 }
             }
             @Override
@@ -121,11 +121,16 @@ public class OrderList extends ToolBarActivity {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("users").child(userKey);
-        myRef.child("viewOrdersTime").setValue(System.currentTimeMillis());
+
     }
 
-    private void showRecycler(final String keyType, final String key, final Long viewOrdersTime){
+    @Override
+    protected void onPause(){
+        super.onPause();
+        updateViewOrderTime();
+    }
+
+    private void showRecycler(final String keyType, final String key , final Long viewOrdersTime){
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -143,34 +148,55 @@ public class OrderList extends ToolBarActivity {
                                 (!filter.equals(Order.DELETED) && !order.getStatus().equals(filter) )
                                 ){
                             viewHolder.hideLayout();
-                            Toast.makeText(getApplicationContext(),filter.toString(),Toast.LENGTH_SHORT).show();
                         }else{
-                            String restaurantKey = order.getRestaurantKey();
-                            DatabaseReference RestaurantRef = mDatabase.child("restaurants").child(restaurantKey);
-                            RestaurantRef.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Restaurant res = dataSnapshot.getValue(Restaurant.class);
-                                    viewHolder.setImage(getApplicationContext(), res.getImage());
-                                    viewHolder.setName(res.getName());
-                                    Float tPrice = 0.0f;
-                                    ArrayList<OrderItem> iList = order.getiList();
-                                    for (OrderItem item : iList) {
-                                        tPrice += item.getQuantity() * item.getPrice();
-                                    }
-                                    String tPriceString = "$" + tPrice.toString();
-                                    viewHolder.setPrice(tPriceString);
+                            if (keyType.equals("userKey")) {
+                                String restaurantKey = order.getRestaurantKey();
+                                DatabaseReference RestaurantRef = mDatabase.child("restaurants").child(restaurantKey);
+                                RestaurantRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Restaurant res = dataSnapshot.getValue(Restaurant.class);
+                                        viewHolder.setImage(getApplicationContext(), res.getImage());
+                                        viewHolder.setName(res.getName());
 
-                                }
-                                @Override
-                                public void onCancelled(DatabaseError error) {
-                                    Log.w(TAG, "Failed to read value.", error.toException());
-                                }
-                            });
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        Log.w(TAG, "Failed to read value.", error.toException());
+                                    }
+                                });
+                            }else if (keyType.equals("restaurantKey")) {
+                                DatabaseReference RestaurantRef = mDatabase.child("users").child(order.getUserKey());
+                                RestaurantRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        User user = dataSnapshot.getValue(User.class);
+                                        viewHolder.setImage(getApplicationContext(), user.getImage());
+                                        viewHolder.setName(user.getName());
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        Log.w(TAG, "Failed to read value.", error.toException());
+                                    }
+                                });
+                            }
+                            //set totalPrice
+                            Float tPrice = 0.0f;
+                            ArrayList<OrderItem> iList = order.getiList();
+                            for (OrderItem item : iList) {
+                                tPrice += item.getQuantity() * item.getPrice();
+                            }
+                            String tPriceString = "$" + tPrice.toString();
+                            viewHolder.setPrice(tPriceString);
+
                             viewHolder.setUpdateTime(Util.getTimeString(order.getUpdated()));
-                            viewHolder.setStatus(Order.getStatusString(order.getStatus()));
-                            if(order.getUpdated().compareTo(viewOrdersTime) > 0 ){
-                                viewHolder.setSeen(false);
+                            if (!order.getStatus().equals(Order.RATED)) {
+                                viewHolder.setStatus(Order.getStatusString(order.getStatus()));
+                            }else{
+                                viewHolder.setStatus("Rated "+ order.getRating().toString() + " stars");
+                            }
+                            if (order.getUpdated() > viewOrdersTime){
+                                viewHolder.setUnread(true);
                             }
                             viewHolder.mView.setOnClickListener(new OnClickListener() { //Redirect to menu
                                 @Override
@@ -184,14 +210,12 @@ public class OrderList extends ToolBarActivity {
                     }
                 };
                 mItemList.setAdapter(FRBA);
-
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "Failed to read value.", databaseError.toException());
             }
         });
-        updateViewOrdersTime(userKey);
     }
 
     protected static class ItemViewHolder extends RecyclerView.ViewHolder{
@@ -222,18 +246,17 @@ public class OrderList extends ToolBarActivity {
             TextView itemName = mView.findViewById(R.id.itemUpdateTime);
             itemName.setText(updateTime);
         }
-        public void setSeen(Boolean seen){
-            if(!seen){
-                TextView itemName = mView.findViewById(R.id.itemStatus);
-                itemName.setHighlightColor(Color.GREEN);
-            }
-        }
-
         public void hideLayout(){
             mView.setVisibility(GONE);
             RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)itemView.getLayoutParams();
             param.height = 0;
             mView.setLayoutParams(param);
+        }
+        public void setUnread(Boolean unread){
+            if (unread){
+                TextView itemName = mView.findViewById(R.id.itemStatus);
+                itemName.setBackgroundColor(Color.GREEN);
+            }
         }
     }
 
@@ -249,11 +272,6 @@ public class OrderList extends ToolBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.action_orders:
-                Intent intent = new Intent(getApplicationContext(), OrderList.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                break;
             case R.id.action_signOut:
                 AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -276,9 +294,15 @@ public class OrderList extends ToolBarActivity {
                         })
                         .show();
                 break;
+
             case R.id.action_settings:
-                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT)
-                        .show();
+                Intent intent = new Intent(getApplicationContext(),ViewUserSettings.class);
+                startActivity(intent);
+                break;
+            case R.id.all:
+                intent = new Intent(getApplicationContext(), OrderList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 break;
             case R.id.draft:
                 intent = new Intent(getApplicationContext(), OrderList.class);
@@ -323,9 +347,10 @@ public class OrderList extends ToolBarActivity {
         return true;
     }
 
-    public void updateViewOrdersTime(String userKey){
-        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("users").child(userKey);
-        mRef.child("viewOrdersTime").setValue(System.currentTimeMillis());
+    public void updateViewOrderTime(){
+        userKey = mAuth.getCurrentUser().getUid();
+        DatabaseReference userRef = mDatabase.child("users").child(userKey);
+        userRef.child("viewOrdersTime").setValue(System.currentTimeMillis());
     }
 
 
