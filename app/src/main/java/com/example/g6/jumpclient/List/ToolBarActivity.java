@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import com.example.g6.jumpclient.Add.AddUserSettings;
 import com.example.g6.jumpclient.Add.ViewUserSettings;
 import com.example.g6.jumpclient.Class.Order;
+import com.example.g6.jumpclient.Class.Promotion;
 import com.example.g6.jumpclient.Class.User;
 import com.example.g6.jumpclient.R;
 import com.github.juanlabrador.badgecounter.BadgeCounter;
@@ -25,8 +26,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class ToolBarActivity extends AppCompatActivity {
+    private static String userKey;
+    private static Long viewPromoTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        userKey = FirebaseAuth.getInstance().getCurrentUser().getUid();
         super.onCreate(savedInstanceState);
     }
     @Override
@@ -47,6 +51,7 @@ public class ToolBarActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final User user = dataSnapshot.getValue(User.class);
+                viewPromoTime = user.getViewPromosTime();
                 if (user.getStatus() == User.USER) {
                     Query query = FirebaseDatabase.getInstance().getReference().child("orders").orderByChild("userKey").equalTo(userKey);
                     query.addValueEventListener(new ValueEventListener() {
@@ -103,6 +108,36 @@ public class ToolBarActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+        Query user_query =  FirebaseDatabase.getInstance().getReference().child("users").child(userKey).child("viewPromosTime");
+        user_query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final Long viewProTime = dataSnapshot.getValue(Long.class);
+                final Query promo_query = FirebaseDatabase.getInstance().getReference().child("promotions");
+                promo_query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Integer count = 0;
+                        for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                            Promotion promo = childSnapshot.getValue(Promotion.class);
+                            if (promo.getSubscribers().contains(userKey) && promo.getCreated() > viewProTime) {
+                                count++;
+                            }
+                        }
+                        updatePromoNotification(menu, count);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -155,7 +190,16 @@ public class ToolBarActivity extends AppCompatActivity {
         if (notificationCount > 0) {
             BadgeCounter.update(this,
                     menu.findItem(R.id.action_orders),
-                    R.drawable.menu_icon,
+                    R.drawable.cart_icon,
+                    BadgeCounter.BadgeColor.BLACK,
+                    notificationCount);
+        }
+    }
+    public void updatePromoNotification(Menu menu, Integer notificationCount) {
+        if (notificationCount > 0) {
+            BadgeCounter.update(this,
+                    menu.findItem(R.id.action_promos),
+                    R.drawable.promo_icon,
                     BadgeCounter.BadgeColor.BLACK,
                     notificationCount);
         }
