@@ -73,7 +73,8 @@
                 android:value="com.example.g6.jumpclient.List.LocaleList" />
         </activity>
         <activity android:name=".Add.AddUserSettings" />
-        <activity android:name=".Add.ViewUserSettings"></activity>
+        <activity android:name=".Add.ViewUserSettings" />
+        <activity android:name=".List.PromoList"></activity>
     </application>
 
 </manifest>

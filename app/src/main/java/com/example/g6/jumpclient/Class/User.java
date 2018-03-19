@@ -6,13 +6,21 @@ package com.example.g6.jumpclient.Class;
 
 public class User {
     public final static Integer DELETED = 0, USER = 1, VENDOR = 2 , ADMIN = 3;
-    private Long created,updated,viewOrdersTime;
-    private Integer status;
+    private Long created,updated,viewOrdersTime,totalWaitTime,viewPromosTime;
+    private Integer status,ratingCount, totalRating;
     private String name,image;
-    private Double bmr,age,height,weight,targetWeekWeight,mealIntake;
+    private Double bmr,age,height,weight,targetWeekWeight,mealIntake,totalDistance,totalSpending,totalCal;
     private Boolean gender;
 
     public User() {
+    }
+
+    public Long getViewPromosTime() {
+        return viewPromosTime;
+    }
+
+    public void setViewPromosTime(Long viewPromosTime) {
+        this.viewPromosTime = viewPromosTime;
     }
 
     public Boolean getGender() {
@@ -117,5 +125,53 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getTotalWaitTime() {
+        return totalWaitTime;
+    }
+
+    public void setTotalWaitTime(Long totalWaitTime) {
+        this.totalWaitTime = totalWaitTime;
+    }
+
+    public Integer getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(Integer ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public Integer getTotalRating() {
+        return totalRating;
+    }
+
+    public void setTotalRating(Integer totalRating) {
+        this.totalRating = totalRating;
+    }
+
+    public Double getTotalDistance() {
+        return totalDistance;
+    }
+
+    public void setTotalDistance(Double totalDistance) {
+        this.totalDistance = totalDistance;
+    }
+
+    public Double getTotalSpending() {
+        return totalSpending;
+    }
+
+    public void setTotalSpending(Double totalSpending) {
+        this.totalSpending = totalSpending;
+    }
+
+    public Double getTotalCal() {
+        return totalCal;
+    }
+
+    public void setTotalCal(Double totalCal) {
+        this.totalCal = totalCal;
     }
 }

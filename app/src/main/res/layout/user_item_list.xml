@@ -45,6 +45,17 @@
             android:text="Submit Order"
             android:onClick="submitOrderClicked"
             />
+        <Button
+            android:id="@+id/subscribeButton"
+            android:layout_below="@+id/submitOrderButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Subscribe"
+            android:layout_marginTop="20dp"
+            android:background="#ff0000"
+            android:textColor="#ffffff"
+            android:onClick="subscribeButtonClicked"
+            />
     </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>

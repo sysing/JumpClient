@@ -61,6 +61,16 @@
                 android:background="@drawable/delete_icon"
                 android:onClick="deleteButtonClicked" />
 
+            <Button
+                android:id="@+id/subscribeButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/ratingText"
+                android:layout_toEndOf= "@+id/restaurantName"
+                android:background="@mipmap/notification_off_icon" />
+
             <RatingBar
                 android:id="@+id/ratingDisplay"
                 style="?android:attr/ratingBarStyleSmall"

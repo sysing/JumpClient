@@ -1,5 +1,8 @@
 package com.example.g6.jumpclient.Class;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 /**
  * Created by g6 on 05-Mar-18.
  */
@@ -10,10 +13,19 @@ public class Restaurant {
     private Integer status;
     private Long created,updated;
     private Integer upvotes,downvotes;
-    private Double waitTime;
+    private Double waitTime,wilsonRating;
+    private ArrayList<String> subscribers;
 
     public Restaurant(){
 
+    }
+
+    public ArrayList<String> getSubscribers() {
+        return subscribers;
+    }
+
+    public void setSubscribers(ArrayList<String> subscribers) {
+        this.subscribers = subscribers;
     }
 
     public Integer getUpvotes() {

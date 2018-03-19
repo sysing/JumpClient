@@ -12,6 +12,7 @@ public class Order {
     private String userKey,restaurantKey;
     private Long created,updated,submitted,readied;
     private Integer status,rating;
+    private Double orderDistance, totalPrice,totalCal;
 
     public Order() {
     }
@@ -87,6 +88,31 @@ public class Order {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    public Double getOrderDistance() {
+        return orderDistance;
+    }
+
+    public void setOrderDistance(Double orderDistance) {
+        this.orderDistance = orderDistance;
+    }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Double getTotalCal() {
+        return totalCal;
+    }
+
+    public void setTotalCal(Double totalCal) {
+        this.totalCal = totalCal;
+    }
+
     public static String getStatusString(Integer status){
         if (status.equals(DELETED))
             return "DELETED";

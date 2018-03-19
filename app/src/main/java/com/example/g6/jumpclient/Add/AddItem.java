@@ -5,23 +5,32 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.g6.jumpclient.Class.Calorie;
 import com.example.g6.jumpclient.Class.Item;
 import com.example.g6.jumpclient.List.VendorItemList;
 import com.example.g6.jumpclient.R;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+
+import java.util.ArrayList;
 
 public class AddItem extends AppCompatActivity {
 
@@ -58,6 +67,7 @@ public class AddItem extends AppCompatActivity {
             mRef = mRef.child(itemKey);
         }else if (keyType.equals(ADD)){  //adding new restaurant
             mRef = mRef.push();
+            itemKey = mRef.getKey();
         }
     }
 
@@ -128,6 +138,38 @@ public class AddItem extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+        Integer radioButtonId = ((RadioGroup)findViewById( R.id.notifySubscribers )).getCheckedRadioButtonId();
+        final Boolean isNotify = getNotify( radioButtonId);
+        if (isNotify){
+            final DatabaseReference notiRef = FirebaseDatabase.getInstance().getReference().child("promotions").push();
+            DatabaseReference resRef = FirebaseDatabase.getInstance().getReference().child("restaurants").child(restaurantKey).child("subscribers");
+            resRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    GenericTypeIndicator<ArrayList<String>> t = new GenericTypeIndicator<ArrayList<String>>() {};
+                    ArrayList<String>  subs = dataSnapshot.getValue(t);
+                    notiRef.child("itemKey").setValue(itemKey);
+                    notiRef.child("subscribers").setValue(subs);
+                    notiRef.child("created").setValue(System.currentTimeMillis());
+                }
+                @Override
+                public void onCancelled(DatabaseError error) {
+                }
+            });
+        }
+    }
+
+    private Boolean getNotify( int id ) {
+        Boolean res = true;
+        switch( id ) {
+            case R.id.radio_yes:
+                res =  true;
+                break;
+            case R.id.radio_no:
+                res = false;
+                break;
+        }
+        return res;
     }
 
 }

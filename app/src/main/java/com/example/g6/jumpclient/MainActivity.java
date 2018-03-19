@@ -68,10 +68,16 @@ public class MainActivity extends AppCompatActivity {
                                 DatabaseReference current_user = mDatabase.child(user_id);
                                 current_user.child("name").setValue(email_text);
                                 current_user.child("status").setValue(account_type);
-                                current_user.child("delete").setValue(0);
+                                current_user.child("totalDistance").setValue(0);
+                                current_user.child("totalSpending").setValue(0);
+                                current_user.child("totalCal").setValue(0);
+                                current_user.child("totalWaitTime").setValue(0);
+                                current_user.child("totalRating").setValue(0);
+                                current_user.child("ratingCount").setValue(0);
                                 current_user.child("created").setValue(System.currentTimeMillis());
                                 current_user.child("updated").setValue(System.currentTimeMillis());
                                 current_user.child("viewOrdersTime").setValue(System.currentTimeMillis());
+                                current_user.child("viewPromosTime").setValue(System.currentTimeMillis());
 
                                 Toast.makeText(MainActivity.this, "Account Created",Toast.LENGTH_SHORT).show();
                                 Intent login = new Intent(MainActivity.this,LoginActivity.class);

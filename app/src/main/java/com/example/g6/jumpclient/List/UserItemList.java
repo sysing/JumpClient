@@ -1,10 +1,15 @@
 package com.example.g6.jumpclient.List;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,23 +19,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.g6.jumpclient.Class.Item;
+import com.example.g6.jumpclient.Class.Locale;
 import com.example.g6.jumpclient.Class.Order;
 import com.example.g6.jumpclient.Class.OrderItem;
+import com.example.g6.jumpclient.Class.Restaurant;
 import com.example.g6.jumpclient.Class.User;
 import com.example.g6.jumpclient.MainActivity;
 import com.example.g6.jumpclient.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 public class UserItemList extends ToolBarActivity {
@@ -39,11 +54,17 @@ public class UserItemList extends ToolBarActivity {
     private DatabaseReference mRef;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private String restaurantKey, userKey;
-    private Button button1,button2;
+    private static String restaurantKey, userKey;
+    private Button subscribeButton ;
     private static TextView tPriceView, tCalView;
     private static Map<String,ItemCounter> myItems = new HashMap<>();
     private static double mealIntake,getTargetWeekWeight;
+    private static float orderDistance;
+    private static Boolean isSubscribed;
+    //Location
+    private FusedLocationProviderClient mFusedLocationClient;
+    private static Location myLocation;
+    private static final Integer TAG_CODE_PERMISSION_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +74,29 @@ public class UserItemList extends ToolBarActivity {
         mItemList = (RecyclerView) findViewById(R.id.itemList);
         tPriceView = (TextView) findViewById(R.id.totalPrice);
         tCalView = (TextView) findViewById(R.id.totalCal);
+        subscribeButton =  findViewById(R.id.subscribeButton);
+        isSubscribed = false;
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            myLocation = location;
+                            if (location != null) {
+                                // Logic to handle location object
+                            }
+                        }
+                    });
+        } else {
+            ActivityCompat.requestPermissions(this, new String[] {
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION },
+                    TAG_CODE_PERMISSION_LOCATION);
+        }
 
         myItems.clear();
         updateTotalPrice();
@@ -63,12 +107,27 @@ public class UserItemList extends ToolBarActivity {
         //Check Login Status
         mAuth = FirebaseAuth.getInstance();
         userKey = mAuth.getCurrentUser().getUid();
-        mRef.child("users").child(userKey).addValueEventListener(new ValueEventListener() {
+        mRef.child("users").child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                getTargetWeekWeight = user.getTargetWeekWeight();
-                mealIntake = user.getMealIntake();
+                if (user.getTargetWeekWeight()!= null) {
+                    getTargetWeekWeight = user.getTargetWeekWeight();
+                    mealIntake = user.getMealIntake();
+                }
+            }
+            public void onCancelled(DatabaseError error) {
+            }
+        });
+        mRef.child("restaurants").child(restaurantKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                ArrayList<String> subs = restaurant.getSubscribers();
+                if (subs.contains(userKey)) {
+                    isSubscribed = true;
+                    subscribeButton.setText("Unsubscribe");
+                }
             }
             public void onCancelled(DatabaseError error) {
             }
@@ -89,6 +148,24 @@ public class UserItemList extends ToolBarActivity {
 
     @Override
     protected void onResume(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            myLocation = location;
+                            if (location != null) {
+                                // Logic to handle location object
+                            }
+                        }
+                    });
+        } else {
+            ActivityCompat.requestPermissions(this, new String[] {
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION },
+                    TAG_CODE_PERMISSION_LOCATION);
+        }
         super.onResume();
         myItems.clear();
         updateTotalPrice();
@@ -118,25 +195,60 @@ public class UserItemList extends ToolBarActivity {
         mItemList.setAdapter(mFirebaseAdapter);
     }
 
-    public static void updateTotalPrice(){
+    public static Float updateTotalPrice(){
         Float tPrice = 0.0f;
         for (Map.Entry<String, ItemCounter> entry : myItems.entrySet()) {
             tPrice += entry.getValue().getQuantity() * entry.getValue().getPrice();
         }
         String tPriceString = "Total Price: $" + tPrice.toString();
         tPriceView.setText(tPriceString);
+        return tPrice;
     }
-    public static void updateTotalCal(){
+
+    public static Float updateTotalCal(){
         Float tCal = 0.0f;
         for (Map.Entry<String, ItemCounter> entry : myItems.entrySet()) {
             tCal += entry.getValue().getQuantity() * entry.getValue().getCalories();
         }
         String tCalString = "Total Calories: " + tCal.toString() +" kCal";
         tCalView.setText(tCalString);
-        if ( tCal < mealIntake  == getTargetWeekWeight < 0){
-            tCalView.setTextColor(Color.GREEN);
-        }else{
-            tCalView.setTextColor(Color.RED);
+        if (mealIntake > 0) {
+            if (tCal < mealIntake == getTargetWeekWeight < 0) {
+                tCalView.setTextColor(Color.GREEN);
+            } else {
+                tCalView.setTextColor(Color.RED);
+            }
+        }
+        return tCal;
+    }
+
+    public static void setOrderDistance(final DatabaseReference dbRef) {
+        if (myLocation != null) {
+            Query resQuery = FirebaseDatabase.getInstance().getReference().child("restaurants").child(restaurantKey).child("localeKey");
+            resQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String localeKey = dataSnapshot.getValue(String.class);
+                    Query locQuery = FirebaseDatabase.getInstance().getReference().child("locales").child(localeKey);
+                    locQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Locale locale = dataSnapshot.getValue(Locale.class);
+                            Location targetLoc = new Location("");
+                            targetLoc.setLatitude(locale.getLatitude());
+                            targetLoc.setLongitude(locale.getLongitude());
+                            orderDistance= myLocation.distanceTo(targetLoc);
+                            dbRef.setValue(orderDistance);
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                        }
+                    });
+                }
+                @Override
+                public void onCancelled(DatabaseError error) {
+                }
+            });
         }
     }
 
@@ -153,6 +265,54 @@ public class UserItemList extends ToolBarActivity {
 
     }
 
+    public void subscribeButtonClicked(View view) {
+        DatabaseReference resRef = mRef.child("restaurants").child(restaurantKey).child("subscribers");
+        if (isSubscribed) {
+            Toast.makeText(getApplicationContext(), "Unsubscribed!", Toast.LENGTH_SHORT).show();
+            subscribeButton.setText("Subscribe");
+            isSubscribed = false;
+            resRef.runTransaction(new Transaction.Handler() {
+                @Override
+                public Transaction.Result doTransaction(MutableData mutableData) {
+                    GenericTypeIndicator<ArrayList<String>> t = new GenericTypeIndicator<ArrayList<String>>() {};
+                    ArrayList<String> subs = mutableData.getValue(t);
+                    if (subs == null) {
+                        return Transaction.success(mutableData);
+                    }
+                    subs.remove(userKey);
+                    mutableData.setValue(subs);
+                    return Transaction.success(mutableData);
+                }
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean b,
+                                       DataSnapshot dataSnapshot) {
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "Subscribed!", Toast.LENGTH_SHORT).show();
+            subscribeButton.setText("Unsubscribe");
+            isSubscribed = true;
+            resRef.runTransaction(new Transaction.Handler() {
+                @Override
+                public Transaction.Result doTransaction(MutableData mutableData) {
+                    GenericTypeIndicator<ArrayList<String>> t = new GenericTypeIndicator<ArrayList<String>>() {};
+                    ArrayList<String> subs = mutableData.getValue(t);
+                    if (subs == null) {
+                        return Transaction.success(mutableData);
+                    }
+                    subs.add(userKey);
+                    mutableData.setValue(subs);
+                    return Transaction.success(mutableData);
+                }
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean b,
+                                       DataSnapshot dataSnapshot) {
+                }
+            });
+        }
+    }
+
+
     private String uploadOrder () {
         ArrayList<OrderItem> iList = new  ArrayList<>();
         for (Map.Entry<String, ItemCounter> entry : myItems.entrySet()){
@@ -166,6 +326,11 @@ public class UserItemList extends ToolBarActivity {
         newOrder.child("restaurantKey").setValue(restaurantKey);
         newOrder.child("created").setValue(System.currentTimeMillis());
         newOrder.child("updated").setValue(System.currentTimeMillis());
+
+        //OrderSimilarity Stats
+        newOrder.child("totalPrice").setValue(updateTotalPrice());
+        newOrder.child("totalCal").setValue(updateTotalCal());
+        setOrderDistance(newOrder.child("orderDistance"));
         String orderKey = newOrder.getKey();
         return orderKey;
     }
@@ -290,6 +455,7 @@ public class UserItemList extends ToolBarActivity {
             this.price = price;
         }
     }
+
 
 
 }

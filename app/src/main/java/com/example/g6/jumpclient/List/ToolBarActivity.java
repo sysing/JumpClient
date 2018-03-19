@@ -147,6 +147,9 @@ public class ToolBarActivity extends AppCompatActivity {
             case R.id.action_orders:
                 viewOrders();
                 break;
+            case R.id.action_promos:
+                viewPromos();
+                break;
             case R.id.action_signOut:
                 AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -186,6 +189,12 @@ public class ToolBarActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
+    public void viewPromos() {
+        Intent intent = new Intent(getApplicationContext(), PromoList.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
     public void updateOrderNotification(Menu menu, Integer notificationCount) {
         if (notificationCount > 0) {
             BadgeCounter.update(this,
@@ -199,7 +208,7 @@ public class ToolBarActivity extends AppCompatActivity {
         if (notificationCount > 0) {
             BadgeCounter.update(this,
                     menu.findItem(R.id.action_promos),
-                    R.drawable.promo_icon,
+                    R.mipmap.promo_icon,
                     BadgeCounter.BadgeColor.BLACK,
                     notificationCount);
         }

@@ -3,11 +3,11 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.g6.jumpclient.List.OrderList">
+    tools:context="com.example.g6.jumpclient.List.PromoList">
     <android.support.v7.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/orderList"
+        android:id="@+id/promoList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"

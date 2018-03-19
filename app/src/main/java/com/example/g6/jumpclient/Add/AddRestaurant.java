@@ -23,6 +23,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
+
 public class AddRestaurant extends AppCompatActivity {
 
     private ImageButton restaurantImage;
@@ -105,7 +109,13 @@ public class AddRestaurant extends AppCompatActivity {
                             if (keyType.equals(ADD)) {
                                 mRef.child("created").setValue(System.currentTimeMillis());
                                 mRef.child("localeKey").setValue(localeKey);
+                                mRef.child("upvotes").setValue(0);
+                                mRef.child("downvotes").setValue(0);
+                                mRef.child("wilsonRating").setValue(0.0d);
                                 mRef.child("vendorKey").setValue(mAuth.getCurrentUser().getUid());
+                                ArrayList<String> subs = new ArrayList<String>();
+                                subs.add(mAuth.getCurrentUser().getUid());
+                                mRef.child("subscribers").setValue(subs);
                             }
                             Toast.makeText(AddRestaurant.this,"Restaurant Added",Toast.LENGTH_SHORT).show();
 

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.g6.jumpclient.Add.AddRestaurant;
 import com.example.g6.jumpclient.Class.Restaurant;
@@ -25,8 +26,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import static android.view.View.GONE;
 import static android.view.View.OnClickListener;
@@ -109,6 +115,12 @@ public class RestaurantList extends ToolBarActivity {
                         String waitTimeStr = "Estimated Wait Time: " + String.format("%.1f", waitTimeMinutes) + "mins" ;
                         model.setDesc(waitTimeStr);
                     }
+                    ArrayList<String> subs = model.getSubscribers();
+                    if (subs.contains(userKey)) {
+                        viewHolder.setSubscribe(true,restaurantKey);
+                    }else{
+                        viewHolder.setSubscribe(false,restaurantKey);
+                    }
                     viewHolder.setDesc(model.getDesc());
                     viewHolder.setRating((float)model.getWilsonRating());
                     viewHolder.mView.setOnClickListener(new OnClickListener() { //Redirect to menu
@@ -141,6 +153,7 @@ public class RestaurantList extends ToolBarActivity {
             String id;
             Button  editButton = itemView.findViewById(R.id.editButton);
             Button  deleteButton = itemView.findViewById(R.id.deleteButton);
+            Button  subscribeButton = itemView.findViewById(R.id.subscribeButton);
             DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("restaurants");
 
             public ItemViewHolder(View itemView){
@@ -148,6 +161,7 @@ public class RestaurantList extends ToolBarActivity {
                 mView = itemView;
                 editButton.setVisibility(GONE);
                 deleteButton.setVisibility(GONE);
+                subscribeButton.setVisibility(GONE);
             }
 
         public void configLayout(Integer user_status, String restaurantKey) {
@@ -176,8 +190,65 @@ public class RestaurantList extends ToolBarActivity {
                     }
                 });
             }
+            if (user_status == User.USER ) {
+                subscribeButton.setVisibility(VISIBLE);
+            }
         }
 
+        public void setSubscribe(Boolean isSubscribed, String restaurantKey){
+            final DatabaseReference resRef = mRef.child(restaurantKey).child("subscribers");
+            if (isSubscribed){
+                subscribeButton.setBackgroundResource(R.mipmap.notification_on_icon);
+                subscribeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        subscribeButton.setBackgroundResource(R.mipmap.notification_off_icon);
+                        resRef.runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                GenericTypeIndicator<ArrayList<String>> t = new GenericTypeIndicator<ArrayList<String>>() {};
+                                ArrayList<String> subs = mutableData.getValue(t);
+                                if (subs == null) {
+                                    return Transaction.success(mutableData);
+                                }
+                                subs.remove(userKey);
+                                mutableData.setValue(subs);
+                                return Transaction.success(mutableData);
+                            }
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean b,
+                                                   DataSnapshot dataSnapshot) {
+                            }
+                        });
+                    }
+                });
+            }else {
+                subscribeButton.setBackgroundResource(R.mipmap.notification_off_icon);
+                subscribeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        subscribeButton.setBackgroundResource(R.mipmap.notification_on_icon);
+                        resRef.runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                GenericTypeIndicator<ArrayList<String>> t = new GenericTypeIndicator<ArrayList<String>>() {};
+                                ArrayList<String> subs = mutableData.getValue(t);
+                                if (subs == null) {
+                                    return Transaction.success(mutableData);
+                                }
+                                subs.add(userKey);
+                                mutableData.setValue(subs);
+                                return Transaction.success(mutableData);
+                            }
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean b,
+                                                   DataSnapshot dataSnapshot) {
+                            }
+                        });
+                    }
+                });
+            }
+        }
         public void setImage(Context ctx , String image){
             ImageView itemImage = mView.findViewById(R.id.restaurantImage);
             Picasso.with(ctx).load(image).into(itemImage);

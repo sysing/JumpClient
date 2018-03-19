@@ -49,8 +49,6 @@ public class LocaleList extends ToolBarActivity {
     private FusedLocationProviderClient mFusedLocationClient;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,19 +72,24 @@ public class LocaleList extends ToolBarActivity {
             }
 
         };
+    }
 
-         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-         == PackageManager.PERMISSION_GRANTED) {
-             mFusedLocationClient.getLastLocation()
-                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                         @Override
-                         public void onSuccess(Location location) {
-                              myLocation = location;
-                             if (location != null) {
-                                 // Logic to handle location object
-                             }
-                         }
-                     });
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            myLocation = location;
+                            if (location != null) {
+                                // Logic to handle location object
+                            }
+                        }
+                    });
         } else {
             ActivityCompat.requestPermissions(this, new String[] {
                             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -140,8 +143,6 @@ public class LocaleList extends ToolBarActivity {
             }
         };
         mItemList.setAdapter(FRBA);
-
-
     }
 
 

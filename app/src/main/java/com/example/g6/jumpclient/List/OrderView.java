@@ -82,6 +82,8 @@ public class OrderView extends ToolBarActivity {
                 }
             }
         };
+        //System.out.println("Your string here");
+        //Log.i("wei",Double.toString(getWeight(30.0)));
     }
 
     @Override
@@ -325,6 +327,7 @@ public class OrderView extends ToolBarActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Order order = dataSnapshot.getValue(Order.class);
                 updateRestaurantRating(order.getRestaurantKey(), (int)ratingBar.getRating(), (int)ratingBar.getNumStars());
+                updateUserRating(order.getUserKey(),order.getOrderDistance(),order.getTotalPrice(),order.getTotalCal(),order.getReadied()-order.getSubmitted(),order.getRating());
             }
 
             @Override
@@ -356,8 +359,35 @@ public class OrderView extends ToolBarActivity {
             }
         });
     }
+
+    public void updateUserRating(String userKey, final double distance,final double price, final double cal , final long waitTime, final int rating) {
+        DatabaseReference resRef = mRef.child("users").child(userKey);
+        resRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                User user = mutableData.getValue(User.class);
+                if (user == null) {
+                    return Transaction.success(mutableData);
+                }
+                user.setTotalDistance(user.getTotalDistance()+distance);
+                user.setTotalSpending(user.getTotalSpending()+price);
+                user.setTotalCal(user.getTotalCal()+cal);
+                user.setTotalWaitTime(user.getTotalWaitTime()+waitTime);
+                user.setTotalRating(user.getTotalRating()+rating);
+                user.setRatingCount(user.getRatingCount()+ 1);
+                mutableData.setValue(user);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+            }
+        });
+    }
+
     public void updateRestaurantWaitTime(final String rKey) {
-        Query query = mRef.child("orders").orderByChild("restaurantKey").equalTo(restaurantKey);
+        Query query = mRef.child("orders").orderByChild("restaurantKey").equalTo(restaurantKey).limitToFirst(30);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -368,8 +398,7 @@ public class OrderView extends ToolBarActivity {
                     if (order.getStatus() >=  Order.READY) {
                         Double waitTime = (double) order.getReadied() - order.getSubmitted();
                         Double timePassed = (double) System.currentTimeMillis() - order.getReadied();
-                        //Double weight = Math.exp((timePassed) * (-3600000));
-                        double weight = 1;
+                        Double weight = Math.exp((timePassed) / (-3600000));
                         totalWaitTime += waitTime * weight;
                         totalWeight += weight;
                     }
@@ -383,5 +412,9 @@ public class OrderView extends ToolBarActivity {
             public void onCancelled(DatabaseError error) {
             }
         });
+    }
+    public double getWeight(double timePassed){
+        timePassed = timePassed/60;
+        return  Math.exp((timePassed)/-1);
     }
 }

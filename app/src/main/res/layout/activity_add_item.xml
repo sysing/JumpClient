@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.g6.jumpclient.Add.AddItem">
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.example.g6.jumpclient.AddItem">
 
-    <ImageButton
+
+        <ImageButton
         android:id="@+id/itemImage"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:scaleType="fitXY"
         android:onClick="imageButtonClicked"
         />
-    <EditText
-        android:id="@+id/itemName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter item name"
-        />
-    <EditText
+        <EditText
+            android:id="@+id/itemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter item name" />
+
+        <EditText
         android:id="@+id/itemDesc"
         android:hint="Enter item description"
         android:layout_width="match_parent"
@@ -40,7 +46,32 @@
         android:inputType="numberDecimal"
         android:hint="Enter item calorie"
         />
-    <Button
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/notifySubscribers"
+            android:gravity= "center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="30dp"
+                android:text = "Notify Subscribers?"/>
+
+            <RadioButton android:id="@+id/radio_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes"
+                android:checked="true"
+                android:layout_marginRight="40dp" />
+
+            <RadioButton android:id="@+id/radio_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No" />
+        </RadioGroup>
+
+        <Button
         android:id="@+id/addItemButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,3 +80,4 @@
         />
 
 </LinearLayout>
+</ScrollView>
