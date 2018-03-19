@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.g6.jumpclient.Add.AddUserSettings;
 import com.example.g6.jumpclient.Add.ViewUserSettings;
 import com.example.g6.jumpclient.Class.Order;
 import com.example.g6.jumpclient.Class.Promotion;
@@ -208,7 +207,7 @@ public class ToolBarActivity extends AppCompatActivity {
         if (notificationCount > 0) {
             BadgeCounter.update(this,
                     menu.findItem(R.id.action_promos),
-                    R.mipmap.promo_icon,
+                    R.drawable.promo_icon,
                     BadgeCounter.BadgeColor.BLACK,
                     notificationCount);
         }
