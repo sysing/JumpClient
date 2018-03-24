@@ -1,33 +1,21 @@
 package com.example.g6.jumpclient.List;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.g6.jumpclient.Add.ViewUserSettings;
 import com.example.g6.jumpclient.Class.Item;
-import com.example.g6.jumpclient.Class.Order;
-import com.example.g6.jumpclient.Class.OrderItem;
 import com.example.g6.jumpclient.Class.Promotion;
-import com.example.g6.jumpclient.Class.Restaurant;
 import com.example.g6.jumpclient.Class.User;
-import com.example.g6.jumpclient.Class.Util;
 import com.example.g6.jumpclient.MainActivity;
 import com.example.g6.jumpclient.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -36,14 +24,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import static android.view.View.GONE;
-import static android.view.View.OnClickListener;
 
 public class PromoList extends ToolBarActivity {
 
@@ -128,13 +118,15 @@ public class PromoList extends ToolBarActivity {
                     mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            final String promoKey = getRef(position).getKey();
                             Item model = dataSnapshot.getValue(Item.class);
                             viewHolder.setImage(getApplicationContext(),model.getImage());
                             viewHolder.setName(model.getName());
                             viewHolder.setDesc(model.getDesc());
                             viewHolder.setCal(model.getCal().toString()+" kCal");
                             viewHolder.setPrice("$" + model.getPrice().toString());
-                            viewHolder.setUnread((model.getCreated() > viewOrdersTime));
+                            viewHolder.setUnread((model.getUpdated() > viewOrdersTime));
+                            viewHolder.setDelete(promoKey,userKey);
                         }
                         @Override
                         public void onCancelled(DatabaseError error) {
@@ -186,6 +178,33 @@ public class PromoList extends ToolBarActivity {
         public void setStatus(String status){
             TextView itemName = mView.findViewById(R.id.itemStatus);
             itemName.setText(status);
+        }
+        public void setDelete(final String promoKey, final String userKey){
+            Button deleteButton = mView.findViewById(R.id.deleteButton);
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("promotions").child(promoKey).child("subscribers");
+                    ref.runTransaction(new Transaction.Handler() {
+                        @Override
+                        public Transaction.Result doTransaction(MutableData mutableData) {
+                            GenericTypeIndicator<ArrayList<String>> t = new GenericTypeIndicator<ArrayList<String>>() {};
+                            ArrayList<String> subs = mutableData.getValue(t);
+                            if (subs == null) {
+                                return Transaction.success(mutableData);
+                            }
+                            subs.remove(userKey);
+                            mutableData.setValue(subs);
+                            return Transaction.success(mutableData);
+                        }
+                        @Override
+                        public void onComplete(DatabaseError databaseError, boolean b,
+                                               DataSnapshot dataSnapshot) {
+                        }
+                    });
+                }
+            });
+
         }
 
         public void hideLayout(){

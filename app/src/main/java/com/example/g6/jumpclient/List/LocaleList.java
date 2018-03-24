@@ -4,9 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,10 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.g6.jumpclient.Add.AddLocale;
-import com.example.g6.jumpclient.Add.AddRestaurant;
 import com.example.g6.jumpclient.Class.Locale;
 import com.example.g6.jumpclient.MainActivity;
 import com.example.g6.jumpclient.MapsActivity;
@@ -28,9 +24,6 @@ import com.example.g6.jumpclient.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -208,8 +201,6 @@ public class LocaleList extends ToolBarActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-
-
 
 }
 

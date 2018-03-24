@@ -70,9 +70,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_below="@+id/itemCalorie"
                 android:layout_toRightOf="@+id/itemImage"
-                android:background="@drawable/delete_icon"
-                android:onClick="deleteButtonClicked"/>
-
+                android:background="@drawable/delete_icon"  />
+                <!--android:onClick="deleteButtonClicked" -->
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

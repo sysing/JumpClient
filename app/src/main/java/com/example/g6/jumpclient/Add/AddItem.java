@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +13,6 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.g6.jumpclient.Class.Calorie;
 import com.example.g6.jumpclient.Class.Item;
 import com.example.g6.jumpclient.List.VendorItemList;
 import com.example.g6.jumpclient.R;
@@ -97,7 +95,7 @@ public class AddItem extends AppCompatActivity {
         final String desc_text= desc.getText().toString().trim();
         final String price_text= price.getText().toString().trim();
         final String calorie_text = calorie.getText().toString().trim();
-        if (TextUtils.isEmpty(name_text) || TextUtils.isEmpty(desc_text)|| TextUtils.isEmpty(price_text) || (uri == null) ) {
+        if (TextUtils.isEmpty(name_text) || TextUtils.isEmpty(price_text) || (uri == null) ) {
             Toast.makeText(AddItem.this, "Please upload item image & enter name,description,price", Toast.LENGTH_SHORT).show();
             return;
         }

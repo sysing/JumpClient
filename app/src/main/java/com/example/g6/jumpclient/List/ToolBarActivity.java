@@ -119,7 +119,7 @@ public class ToolBarActivity extends AppCompatActivity {
                         Integer count = 0;
                         for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                             Promotion promo = childSnapshot.getValue(Promotion.class);
-                            if (promo.getSubscribers().contains(userKey) && promo.getCreated() > viewProTime) {
+                            if (promo.getSubscribers() != null && promo.getSubscribers().contains(userKey) && promo.getCreated()!= null && promo.getCreated() > viewProTime) {
                                 count++;
                             }
                         }

@@ -24,8 +24,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
 
 public class AddRestaurant extends AppCompatActivity {
 
@@ -94,7 +92,7 @@ public class AddRestaurant extends AppCompatActivity {
         final String name_text= name.getText().toString().trim();
         final String desc_text= desc.getText().toString().trim();
 
-        if (!TextUtils.isEmpty(name_text)&& !TextUtils.isEmpty(desc_text) && (uri != null) ) {
+        if (!TextUtils.isEmpty(name_text) && (uri != null) ) {
             StorageReference filepath = storageReference.child(uri.getLastPathSegment()) ;
             filepath.putFile(uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>(){

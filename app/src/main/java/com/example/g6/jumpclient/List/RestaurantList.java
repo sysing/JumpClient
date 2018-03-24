@@ -12,11 +12,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.g6.jumpclient.Add.AddRestaurant;
 import com.example.g6.jumpclient.Class.Restaurant;
-import com.example.g6.jumpclient.Class.Score;
 import com.example.g6.jumpclient.Class.User;
 import com.example.g6.jumpclient.MainActivity;
 import com.example.g6.jumpclient.R;
@@ -112,7 +110,7 @@ public class RestaurantList extends ToolBarActivity {
                     viewHolder.setName(model.getName());
                     if (model.getWaitTime() != null){
                         double waitTimeMinutes = (model.getWaitTime()/60000);
-                        String waitTimeStr = "Estimated Wait Time: " + String.format("%.1f", waitTimeMinutes) + "mins" ;
+                        String waitTimeStr = "Wait Time: " + String.format("%.1f", waitTimeMinutes) + "mins" ;
                         model.setDesc(waitTimeStr);
                     }
                     ArrayList<String> subs = model.getSubscribers();

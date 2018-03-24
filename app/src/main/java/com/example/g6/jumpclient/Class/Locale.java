@@ -1,7 +1,5 @@
 package com.example.g6.jumpclient.Class;
 
-import java.util.List;
-
 /**
  * Created by g6 on 05-Mar-18.
  */

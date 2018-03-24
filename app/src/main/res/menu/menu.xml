@@ -6,7 +6,7 @@
         android:id="@+id/action_promos"
         android:orderInCategory="1"
         android:title="View Promotions"
-        android:icon="@mipmap/notification_on_icon"
+        android:icon="@drawable/promo_icon"
         android:actionLayout="@layout/badge_counter"
         app:showAsAction="always" />
 
@@ -14,7 +14,7 @@
         android:id="@+id/action_orders"
         android:orderInCategory="2"
         android:title="View Orders"
-        android:icon="@drawable/menu_icon"
+        android:icon="@drawable/cart_icon"
         android:actionLayout="@layout/badge_counter"
         app:showAsAction="always" />
 

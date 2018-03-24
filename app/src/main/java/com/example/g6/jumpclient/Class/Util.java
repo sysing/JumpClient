@@ -1,20 +1,10 @@
 package com.example.g6.jumpclient.Class;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.location.Location;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 import com.example.g6.jumpclient.R;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.simmetrics.SetMetric;
 import org.simmetrics.metrics.OverlapCoefficient;
@@ -22,7 +12,6 @@ import org.simmetrics.metrics.OverlapCoefficient;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
