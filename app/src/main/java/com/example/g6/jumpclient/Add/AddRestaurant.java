@@ -102,7 +102,7 @@ public class AddRestaurant extends AppCompatActivity {
                             mRef.child("name").setValue(name_text);
                             mRef.child("desc").setValue(desc_text);
                             mRef.child("image").setValue(downloadUrl.toString());
-                            mRef.child("status").setValue(Restaurant.VALID);
+                            mRef.child("status").setValue(Restaurant.DELETED);
                             mRef.child("updated").setValue(System.currentTimeMillis());
                             if (keyType.equals(ADD)) {
                                 mRef.child("created").setValue(System.currentTimeMillis());

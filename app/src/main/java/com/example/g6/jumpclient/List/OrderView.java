@@ -323,7 +323,7 @@ public class OrderView extends ToolBarActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Order order = dataSnapshot.getValue(Order.class);
                 updateRestaurantRating(order.getRestaurantKey(), (int)ratingBar.getRating(), (int)ratingBar.getNumStars());
-                updateUserRating(order.getUserKey(),order.getOrderDistance(),order.getTotalPrice(),order.getTotalCal(),order.getReadied()-order.getSubmitted(),order.getRating());
+                //updateUserRating(order.getUserKey(),order.getOrderDistance(),order.getTotalPrice(),order.getTotalCal(),order.getReadied()-order.getSubmitted(),order.getRating());
             }
 
             @Override
@@ -383,7 +383,7 @@ public class OrderView extends ToolBarActivity {
     }
 
     public void updateRestaurantWaitTime(final String rKey) {
-        Query query = mRef.child("orders").orderByChild("restaurantKey").equalTo(restaurantKey).limitToFirst(30);
+        Query query = mRef.child("orders").orderByChild("restaurantKey").equalTo(restaurantKey).limitToFirst(100);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

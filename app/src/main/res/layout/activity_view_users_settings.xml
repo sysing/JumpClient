@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 
-    tools:context="com.example.g6.jumpclient.Add.ViewUserSettings">
+    tools:context="com.example.g6.jumpclient.View.ViewUserSettings">
 
     <ImageView
         android:id="@+id/userImage"
@@ -14,7 +14,6 @@
         android:scaleType="fitXY"
         android:layout_gravity="center"
         android:onClick="imageButtonClicked"
-        android:layout_marginTop="10dp"
         android:layout_marginStart="5dp"
         android:background="@mipmap/warning_icon"
         />

@@ -1,4 +1,4 @@
-package com.example.g6.jumpclient.Add;
+package com.example.g6.jumpclient.View;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.g6.jumpclient.Add.AddUserSettings;
 import com.example.g6.jumpclient.Class.User;
 import com.example.g6.jumpclient.R;
 import com.google.firebase.auth.FirebaseAuth;

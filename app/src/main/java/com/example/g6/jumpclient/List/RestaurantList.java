@@ -102,7 +102,7 @@ public class RestaurantList extends ToolBarActivity {
                 final String restaurantKey = getRef(position).getKey();
                 if (!(model.getLocaleKey().equals(localeKey)) ||
                         (user_status == User.VENDOR && !(model.getVendorKey().equals(userKey))) ||
-                        model.getStatus().intValue() == Restaurant.DELETED.intValue() ){
+                        (user_status == User.USER && model.getStatus().intValue() == Restaurant.DELETED.intValue()) ){
                     viewHolder.hideLayout();
                 }else{
                     viewHolder.configLayout(user_status,restaurantKey);

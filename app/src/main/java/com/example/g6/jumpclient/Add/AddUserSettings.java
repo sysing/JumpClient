@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.g6.jumpclient.Class.Calorie;
 import com.example.g6.jumpclient.R;
+import com.example.g6.jumpclient.View.ViewUserSettings;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;

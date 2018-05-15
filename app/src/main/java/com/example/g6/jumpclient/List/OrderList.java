@@ -19,7 +19,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.g6.jumpclient.Add.ViewUserSettings;
+import com.example.g6.jumpclient.View.ViewUserSettings;
 import com.example.g6.jumpclient.Class.Order;
 import com.example.g6.jumpclient.Class.OrderItem;
 import com.example.g6.jumpclient.Class.Restaurant;
@@ -337,6 +337,13 @@ public class OrderList extends ToolBarActivity {
                 intent = new Intent(getApplicationContext(), OrderList.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("filter",Order.COMPLETED);
+                startActivity(intent);
+                break;
+
+            case R.id.rated:
+                intent = new Intent(getApplicationContext(), OrderList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("filter",Order.RATED);
                 startActivity(intent);
                 break;
 

@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.g6.jumpclient.Add.ViewUserSettings;
+import com.example.g6.jumpclient.View.ViewUserSettings;
 import com.example.g6.jumpclient.Class.Order;
 import com.example.g6.jumpclient.Class.Promotion;
 import com.example.g6.jumpclient.Class.User;

@@ -10,9 +10,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
@@ -73,7 +73,7 @@
                 android:value="com.example.g6.jumpclient.List.LocaleList" />
         </activity>
         <activity android:name=".Add.AddUserSettings" />
-        <activity android:name=".Add.ViewUserSettings" />
+        <activity android:name=".View.ViewUserSettings" />
         <activity android:name=".List.PromoList"></activity>
     </application>
 

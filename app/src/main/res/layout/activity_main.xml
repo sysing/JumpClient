@@ -54,7 +54,7 @@
         <RadioButton android:id="@+id/radio_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign Up as User"
+            android:text="Sign Up as Customer"
             android:checked="true"/>
 
         <RadioButton android:id="@+id/radio_vendor"
